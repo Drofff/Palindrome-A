@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Palindrome</string>
+    <string name="title_documents_check">Дані водіїв</string>
+    <string name="title_add_violation_short">Порушення</string>
+    <string name="title_add_violation">Додати порушення</string>
+    <string name="title_profile">Мої дані</string>
+    <string name="title_token">Номер жетона</string>
+    <string name="title_department">Відділення</string>
+    <string name="read_geo_position">Зчитати</string>
+    <string name="title_car_number">Номер автомобіля</string>
+    <string name="title_location">Місце фіксації</string>
+    <string name="title_violation_type">Порушення</string>
+    <string name="add_button">Додати</string>
+    <string name="login_button">Вхід</string>
+    <string name="title_password">Пароль</string>
+    <string name="title_email">Електронна пошта</string>
+</resources>

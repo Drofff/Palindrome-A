@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_documents_check"
+        android:icon="@drawable/documents_check"
+        android:title="@string/title_documents_check" />
+
+    <item
+        android:id="@+id/navigation_violation_add"
+        android:icon="@drawable/violation_add"
+        android:title="@string/title_add_violation_short" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/profile"
+        android:title="@string/title_profile" />
+
+</menu>
