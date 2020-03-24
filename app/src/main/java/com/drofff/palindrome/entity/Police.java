@@ -21,7 +21,7 @@ public class Police {
 
     private String tokenNumber;
 
-    private byte[] photo;
+    private String photoUrl;
 
     private String department;
 
@@ -41,8 +41,7 @@ public class Police {
         police.middleName = jsonObject.getString("middleName");
         police.position = jsonObject.getString("position");
         police.tokenNumber = jsonObject.getString("tokenNumber");
-        String photoStr = jsonObject.getString("photo");
-        police.photo = photoStr.getBytes();
+        police.photoUrl = jsonObject.getString("photoUrl");
         police.department = jsonObject.getString("department");
         return police;
     }
@@ -95,12 +94,12 @@ public class Police {
         this.tokenNumber = tokenNumber;
     }
 
-    public byte[] getPhoto() {
-        return photo;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     public String getDepartment() {

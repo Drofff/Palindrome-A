@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         focusOnEmailField();
         authorizationTokenService = getAuthorizationTokenService();
         loginButton = findViewById(R.id.login_button);
+        initUserContextIfNeeded();
         redirectToMainActivityIfAuthenticated();
         registerLoginListenerAt(loginButton);
     }
@@ -58,6 +59,17 @@ public class LoginActivity extends AppCompatActivity {
         AuthorizationTokenService tokenService = new JsonFileAuthorizationTokenService(rootDir);
         BeanContext.registerBean(tokenService);
         return tokenService;
+    }
+
+    private void initUserContextIfNeeded() {
+        if(isContextNotInitialized()) {
+            String policeInfoUrl = getResources().getString(R.string.police_info_url);
+            UserContextHolder.initContext(policeInfoUrl);
+        }
+    }
+
+    private boolean isContextNotInitialized() {
+        return !UserContextHolder.isContextInitialized();
     }
 
     private void redirectToMainActivityIfAuthenticated() {
@@ -104,19 +116,13 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject credentialsJson = new JSONObject(userDto.toJsonStr());
             JSONObject response = postAtUrlWithJsonBody(authenticationUrl, credentialsJson);
             String authorizationToken = response.getString(TOKEN_PARAM);
-            authenticateUserByToken(authorizationToken);
+            authorizationTokenService.saveAuthorizationToken(authorizationToken);
             redirectToMainActivity();
         } catch(RequestException | JSONException e) {
             runOnUiThread(this::displayInputError);
         } finally {
             runOnUiThread(this::hideProgressBar);
         }
-    }
-
-    private void authenticateUserByToken(String token) {
-        authorizationTokenService.saveAuthorizationToken(token);
-        String policeInfoUrl = getResources().getString(R.string.police_info_url);
-        UserContextHolder.initContext(policeInfoUrl);
     }
 
     private void redirectToMainActivity() {

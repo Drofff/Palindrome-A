@@ -2,5 +2,5 @@
 <resources>
     <string name="add_violation_url">http://localhost:8080/endpoint</string>
     <string name="authentication_url">https://palindrome-inc.herokuapp.com/api/authenticate</string>
-    <string name="police_info_url">https://palindrome-inc.herokuapp.com/api/police-info</string>
+    <string name="police_info_url">https://palindrome-inc.herokuapp.com/api/polices/info</string>
 </resources>
