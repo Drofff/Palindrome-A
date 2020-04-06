@@ -14,4 +14,20 @@ public class StringUtils {
                 .collect(Collectors.joining(" "));
     }
 
+    public static String shortenIfNeeded(String str, int maxLength) {
+        if(isAboveMaxLength(str, maxLength)) {
+            String shortStr = str.substring(0, maxLength - 3);
+            return shortStr + "..";
+        }
+        return str;
+    }
+
+    private static boolean isAboveMaxLength(String str, int maxLength) {
+        return str.length() > maxLength;
+    }
+
+    public static boolean isBlank(String str) {
+        return str.trim().isEmpty();
+    }
+
 }

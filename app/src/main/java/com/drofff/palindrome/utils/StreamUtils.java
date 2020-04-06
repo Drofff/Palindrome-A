@@ -1,5 +1,7 @@
 package com.drofff.palindrome.utils;
 
+import com.drofff.palindrome.collector.QueueCollector;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +31,10 @@ public class StreamUtils {
         }
         accumulator.append(nextLine);
         return readAllAsStringRecursively(reader, accumulator);
+    }
+
+    public static <T> QueueCollector<T> toQueue() {
+        return new QueueCollector<>();
     }
 
 }

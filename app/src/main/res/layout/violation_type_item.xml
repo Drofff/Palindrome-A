@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/violation_type_name"
+    android:layout_width="273dp"
+    android:layout_height="44dp"
+    android:paddingTop="7sp"
+    android:paddingBottom="7sp"
+    android:paddingStart="10sp"
+    android:paddingEnd="4sp"
+    android:textSize="18sp"
+    android:singleLine="true"
+    android:scrollHorizontally="true" />

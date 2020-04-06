@@ -3,4 +3,6 @@
     <string name="add_violation_url">http://localhost:8080/endpoint</string>
     <string name="authentication_url">https://palindrome-inc.herokuapp.com/api/authenticate</string>
     <string name="police_info_url">https://palindrome-inc.herokuapp.com/api/polices/info</string>
+    <string name="violation_types_url">https://palindrome-inc.herokuapp.com/api/violations/types</string>
+    <string name="get_location_url">https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${latitude},${longitude}&amp;mode=retrieveAddresses&amp;maxresults=1&amp;gen=9&amp;apiKey=cB0rD3P2fluVKeDwTAIGiRvrnHKhbXOkesVZn4Ht3zQ</string>
 </resources>
