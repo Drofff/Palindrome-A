@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static com.drofff.palindrome.utils.HttpUtils.getAtUrl;
+import static com.drofff.palindrome.utils.HttpUtils.getFromServer;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 public class UserContext {
@@ -57,7 +57,7 @@ public class UserContext {
     }
 
     private void requestPoliceFromServer(CompletableFuture<Police> resultFuture) {
-        JSONObject response = getAtUrl(userInfoUrl);
+        JSONObject response = getFromServer(userInfoUrl);
         Police police = Police.fromJSONObject(response);
         resultFuture.complete(police);
     }

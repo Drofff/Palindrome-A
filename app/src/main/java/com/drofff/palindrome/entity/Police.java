@@ -5,7 +5,7 @@ import com.drofff.palindrome.exception.PalindromeException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.drofff.palindrome.utils.StringUtils.joinNonNullPartsWithSpace;
+import static com.drofff.palindrome.utils.StringUtils.joinNonNullPartsWith;
 
 public class Police {
 
@@ -111,7 +111,7 @@ public class Police {
     }
 
     public String getFullName() {
-        return joinNonNullPartsWithSpace(firstName, middleName, lastName);
+        return joinNonNullPartsWith(" ", firstName, middleName, lastName);
     }
 
 }

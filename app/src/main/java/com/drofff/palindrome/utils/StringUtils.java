@@ -2,16 +2,17 @@ package com.drofff.palindrome.utils;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 public class StringUtils {
 
     private StringUtils() {}
 
-    public static String joinNonNullPartsWithSpace(String ... parts) {
-       return Arrays.stream(parts)
+    public static String joinNonNullPartsWith(String delimiter, String ... parts) {
+        return Arrays.stream(parts)
                 .filter(Objects::nonNull)
-                .collect(Collectors.joining(" "));
+                .collect(joining(delimiter));
     }
 
     public static String shortenIfNeeded(String str, int maxLength) {
@@ -26,7 +27,7 @@ public class StringUtils {
         return str.length() > maxLength;
     }
 
-    public static boolean isBlank(String str) {
+    static boolean isBlank(String str) {
         return str.trim().isEmpty();
     }
 

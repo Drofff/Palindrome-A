@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 import static com.drofff.palindrome.utils.FormattingUtils.resolveStringParams;
 import static com.drofff.palindrome.utils.HttpUtils.getAtUrl;
 import static com.drofff.palindrome.utils.JsonUtils.getJSONObjectAtPath;
+import static com.drofff.palindrome.utils.StringUtils.joinNonNullPartsWith;
 
 public class HttpLocationResolver implements LocationResolver {
 
@@ -31,7 +32,7 @@ public class HttpLocationResolver implements LocationResolver {
     private static final String POSTAL_CODE_KEY = "PostalCode";
     private static final String STREET_KEY = "Street";
 
-    private static final String EMPTY_STRING = "";
+    private static final String ADDRESS_DELIMITER = ", ";
 
     private final String getLocationUrl;
 
@@ -45,7 +46,7 @@ public class HttpLocationResolver implements LocationResolver {
         Map<String, String> locationParams = locationParamsOf(longitude, latitude);
         String getLocationUrlWithParams = resolveStringParams(getLocationUrl, locationParams);
         CompletableFuture<String> locationFuture = new CompletableFuture<>();
-        EXECUTOR.execute(() -> resolveLocationWithUrl(getLocationUrlWithParams, locationFuture));
+        EXECUTOR.execute(() -> requestResolvedLocationAtUrl(getLocationUrlWithParams, locationFuture));
         return locationFuture.join();
     }
 
@@ -56,15 +57,16 @@ public class HttpLocationResolver implements LocationResolver {
         return locationParams;
     }
 
-    private void resolveLocationWithUrl(String resolveLocationUrl, CompletableFuture<String> locationFuture) {
+    private void requestResolvedLocationAtUrl(String resolveLocationUrl, CompletableFuture<String> locationFuture) {
         JSONObject responseJson = getAtUrl(resolveLocationUrl);
         JSONObject addressJson = getJSONObjectAtPath(responseJson, JSON_RESPONSE_ADDRESS_PATH);
-        String location = getStringFromJSONObjectByKeyIfPresent(addressJson, LABEL_KEY)
+        String label = getStringFromJSONObjectByKeyIfPresent(addressJson, LABEL_KEY)
                 .orElseThrow(() -> new PalindromeException("Missing location label"));
-        location += getStringFromJSONObjectByKeyIfPresent(addressJson, POSTAL_CODE_KEY)
-                .orElse(EMPTY_STRING);
-        location += getStringFromJSONObjectByKeyIfPresent(addressJson, STREET_KEY)
-                .orElse(EMPTY_STRING);
+        String postalCode = getStringFromJSONObjectByKeyIfPresent(addressJson, POSTAL_CODE_KEY)
+                .orElse(null);
+        String street = getStringFromJSONObjectByKeyIfPresent(addressJson, STREET_KEY)
+                .orElse(null);
+        String location = joinNonNullPartsWith(ADDRESS_DELIMITER, label, postalCode, street);
         locationFuture.complete(location);
     }
 

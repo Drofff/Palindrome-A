@@ -1,6 +1,7 @@
 package com.drofff.palindrome.collector;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -38,7 +39,7 @@ public class QueueCollector<T> implements Collector<T, List<T>, Queue<T>> {
 
     @Override
     public Set<Characteristics> characteristics() {
-        throw new UnsupportedOperationException();
+        return Collections.emptySet();
     }
 
 }

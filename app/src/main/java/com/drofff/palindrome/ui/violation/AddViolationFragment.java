@@ -37,23 +37,25 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static com.drofff.palindrome.constants.JsonConstants.LIST_RESPONSE_PAYLOAD_KEY;
-import static com.drofff.palindrome.utils.HttpUtils.getAtUrl;
-import static com.drofff.palindrome.utils.HttpUtils.postAtUrlWithJsonBody;
+import static com.drofff.palindrome.utils.HttpUtils.getFromServer;
+import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
 import static com.drofff.palindrome.utils.JsonUtils.getListFromJsonByKey;
 import static com.drofff.palindrome.utils.ValidationUtils.validateNotBlank;
 import static com.google.android.material.snackbar.Snackbar.LENGTH_LONG;
 
 public class AddViolationFragment extends Fragment {
 
-    private static final Executor ADD_VIOLATION_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final Executor ADD_VIOLATION_EXECUTOR = Executors.newFixedThreadPool(2);
 
     private static final int LOCATION_PERMISSION_CODE = 33;
 
@@ -91,7 +93,7 @@ public class AddViolationFragment extends Fragment {
 
     private List<ViolationType> loadViolationTypes() {
         String violationTypesUrl = getResources().getString(R.string.violation_types_url);
-        JSONObject violationTypesJson = getAtUrl(violationTypesUrl);
+        JSONObject violationTypesJson = getFromServer(violationTypesUrl);
         List<JSONObject> violationTypeJsonList = getListFromJsonByKey(violationTypesJson, LIST_RESPONSE_PAYLOAD_KEY);
         return violationTypeJsonList.stream()
                 .map(ViolationType::fromJSONObject)
@@ -139,8 +141,20 @@ public class AddViolationFragment extends Fragment {
     }
 
     private boolean isPermittedToReadLocation() {
+        return isFineLocationPermitted() && isCoarseLocationPermitted();
+    }
+
+    private boolean isFineLocationPermitted() {
+        return hasPermission(ACCESS_FINE_LOCATION);
+    }
+
+    private boolean isCoarseLocationPermitted() {
+        return hasPermission(ACCESS_COARSE_LOCATION);
+    }
+
+    private boolean hasPermission(String permission) {
         Activity activity = getParentActivity();
-        return checkSelfPermission(activity, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+        return checkSelfPermission(activity, permission) == PERMISSION_GRANTED;
     }
 
     private void readLocation() throws SecurityException {
@@ -165,7 +179,15 @@ public class AddViolationFragment extends Fragment {
     private Location getCurrentLocation() throws SecurityException {
         LocationManager locationManager = getLocationManager();
         validateGpsProviderEnabled(locationManager);
-        return getLatestGpsLocation(locationManager);
+        Location gpsLocation = getGPSLocation(locationManager);
+        if(gpsLocation == null) {
+            Location networkLocation = getNetworkLocation(locationManager);
+            if(networkLocation == null) {
+                throw new PalindromeException("Неможливо визначити місцезнаходження");
+            }
+            return networkLocation;
+        }
+        return gpsLocation;
     }
 
     private LocationManager getLocationManager() {
@@ -183,12 +205,12 @@ public class AddViolationFragment extends Fragment {
         return !locationManager.isProviderEnabled(GPS_PROVIDER);
     }
 
-    private Location getLatestGpsLocation(LocationManager locationManager) throws SecurityException {
-        Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
-        if(location == null) {
-            throw new PalindromeException("Неможливо визначити місцеположення");
-        }
-        return location;
+    private Location getGPSLocation(LocationManager locationManager) throws SecurityException {
+        return locationManager.getLastKnownLocation(GPS_PROVIDER);
+    }
+
+    private Location getNetworkLocation(LocationManager locationManager) throws SecurityException {
+        return locationManager.getLastKnownLocation(NETWORK_PROVIDER);
     }
 
     private void hideProgressBar() {
@@ -198,7 +220,7 @@ public class AddViolationFragment extends Fragment {
 
     private void requestLocationPermission() {
         Activity activity = getParentActivity();
-        String[] permissions = { ACCESS_FINE_LOCATION };
+        String[] permissions = { ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION };
         ActivityCompat.requestPermissions(activity, permissions, LOCATION_PERMISSION_CODE);
     }
 
@@ -251,7 +273,7 @@ public class AddViolationFragment extends Fragment {
 
     private void createViolation(String addViolationUrl, Violation violation) {
         try {
-            postAtUrlWithJsonBody(addViolationUrl, violation.toJSONObject());
+            postToServerWithJsonBody(addViolationUrl, violation.toJSONObject());
         } catch(RequestException e) {
             throw new ValidationException("Car with such number doesn't exist");
         }

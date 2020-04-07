@@ -28,7 +28,7 @@ import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.drofff.palindrome.constants.SecurityConstants.TOKEN_PARAM;
-import static com.drofff.palindrome.utils.HttpUtils.postAtUrlWithJsonBody;
+import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
 import static com.drofff.palindrome.utils.UiUtils.hideKeyboard;
 
 public class LoginActivity extends AppCompatActivity {
@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     private void sendAuthenticationRequest(String authenticationUrl, UserDto userDto) {
         try {
             JSONObject credentialsJson = new JSONObject(userDto.toJsonStr());
-            JSONObject response = postAtUrlWithJsonBody(authenticationUrl, credentialsJson);
+            JSONObject response = postToServerWithJsonBody(authenticationUrl, credentialsJson);
             String authorizationToken = response.getString(TOKEN_PARAM);
             authorizationTokenService.saveAuthorizationToken(authorizationToken);
             redirectToMainActivity();

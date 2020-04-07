@@ -29,19 +29,17 @@ public class HttpUtils {
 
     private HttpUtils() {}
 
-    public static JSONObject postAtUrlWithJsonBody(String url, JSONObject jsonBody) {
+    public static JSONObject postToServerWithJsonBody(String url, JSONObject jsonBody) {
         try {
-            return postRequestAtUrlWithJsonBody(url, jsonBody);
+            return postRequestToServerWithJsonBody(url, jsonBody);
         } catch(IOException | JSONException e) {
-            e.printStackTrace();
             throw new RequestException(e.getMessage());
         }
     }
 
-    private static JSONObject postRequestAtUrlWithJsonBody(String url, JSONObject jsonBody) throws IOException, JSONException {
-        HttpURLConnection httpURLConnection = requestUrlWithMethod(url, POST);
+    private static JSONObject postRequestToServerWithJsonBody(String url, JSONObject jsonBody) throws IOException, JSONException {
+        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, POST);
         attachAuthorizationTokenIfPresent(httpURLConnection);
-        attachJsonContentTypeHeaders(httpURLConnection);
         attachJsonBodyToRequest(jsonBody, httpURLConnection);
         JSONObject response = getJsonResponse(httpURLConnection);
         httpURLConnection.disconnect();
@@ -57,6 +55,22 @@ public class HttpUtils {
         }
     }
 
+    public static JSONObject getFromServer(String url) {
+        try {
+            return getRequestToServer(url);
+        } catch(IOException | JSONException e) {
+            throw new RequestException(e.getMessage());
+        }
+    }
+
+    private static JSONObject getRequestToServer(String url) throws IOException, JSONException {
+        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, GET);
+        attachAuthorizationTokenIfPresent(httpURLConnection);
+        JSONObject response = getJsonResponse(httpURLConnection);
+        httpURLConnection.disconnect();
+        return response;
+    }
+
     public static JSONObject getAtUrl(String url) {
         try {
             return getRequestAtUrl(url);
@@ -66,18 +80,18 @@ public class HttpUtils {
     }
 
     private static JSONObject getRequestAtUrl(String url) throws IOException, JSONException {
-        HttpURLConnection httpURLConnection = requestUrlWithMethod(url, GET);
-        attachAuthorizationTokenIfPresent(httpURLConnection);
-        attachJsonContentTypeHeaders(httpURLConnection);
+        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, GET);
         JSONObject response = getJsonResponse(httpURLConnection);
         httpURLConnection.disconnect();
         return response;
     }
 
-    private static HttpURLConnection requestUrlWithMethod(String url, HttpMethod method) throws IOException {
+    private static HttpURLConnection buildJsonRequestToUrlUsingMethod(String url, HttpMethod method) throws IOException {
         URL request = new URL(url);
         HttpURLConnection httpURLConnection = (HttpURLConnection) request.openConnection();
         httpURLConnection.setRequestMethod(method.name());
+        httpURLConnection.setRequestProperty(CONTENT_TYPE_HEADER, JSON_MEDIA_TYPE);
+        httpURLConnection.setRequestProperty(ACCEPT_HEADER, JSON_MEDIA_TYPE);
         return httpURLConnection;
     }
 
@@ -85,11 +99,6 @@ public class HttpUtils {
         AuthorizationTokenService authorizationTokenService = BeanContext.getBeanOfClass(AuthorizationTokenService.class);
         authorizationTokenService.getAuthorizationTokenIfPresent()
                 .ifPresent(token -> connection.setRequestProperty(AUTHORIZATION_TOKEN_HEADER, token));
-    }
-
-    private static void attachJsonContentTypeHeaders(HttpURLConnection httpURLConnection) {
-        httpURLConnection.setRequestProperty(CONTENT_TYPE_HEADER, JSON_MEDIA_TYPE);
-        httpURLConnection.setRequestProperty(ACCEPT_HEADER, JSON_MEDIA_TYPE);
     }
 
     private static JSONObject getJsonResponse(HttpURLConnection connection) throws IOException, JSONException {
