@@ -27,7 +27,7 @@ public class StringUtils {
         return str.length() > maxLength;
     }
 
-    static boolean isBlank(String str) {
+    public static boolean isBlank(String str) {
         return str.trim().isEmpty();
     }
 

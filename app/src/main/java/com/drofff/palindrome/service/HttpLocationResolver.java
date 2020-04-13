@@ -2,6 +2,7 @@ package com.drofff.palindrome.service;
 
 import android.location.Location;
 
+import com.drofff.palindrome.annotation.StringResource;
 import com.drofff.palindrome.exception.PalindromeException;
 
 import org.json.JSONException;
@@ -14,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static com.drofff.palindrome.R.string.get_location_url;
 import static com.drofff.palindrome.utils.FormattingUtils.resolveStringParams;
 import static com.drofff.palindrome.utils.HttpUtils.getAtUrl;
 import static com.drofff.palindrome.utils.JsonUtils.getJSONObjectAtPath;
@@ -36,7 +38,7 @@ public class HttpLocationResolver implements LocationResolver {
 
     private final String getLocationUrl;
 
-    public HttpLocationResolver(String getLocationUrl) {
+    public HttpLocationResolver(@StringResource(id = get_location_url) String getLocationUrl) {
         this.getLocationUrl = getLocationUrl;
     }
 

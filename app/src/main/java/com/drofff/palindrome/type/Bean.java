@@ -2,21 +2,21 @@ package com.drofff.palindrome.type;
 
 public class Bean {
 
-    private Object bean;
+    private Object instance;
 
     private Class<?> clazz;
 
-    public Bean(Object bean, Class<?> clazz) {
-        this.bean = bean;
+    public Bean(Object instance, Class<?> clazz) {
+        this.instance = instance;
         this.clazz = clazz;
     }
 
-    public Object getBean() {
-        return bean;
+    public Object getInstance() {
+        return instance;
     }
 
-    public void setBean(Object bean) {
-        this.bean = bean;
+    public void setInstance(Object instance) {
+        this.instance = instance;
     }
 
     public Class<?> getClazz() {

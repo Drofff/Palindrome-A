@@ -1,8 +1,8 @@
-package com.drofff.palindrome.context;
+package com.drofff.palindrome.service;
 
+import com.drofff.palindrome.annotation.StringResource;
 import com.drofff.palindrome.entity.Police;
 import com.drofff.palindrome.exception.PalindromeException;
-import com.drofff.palindrome.service.AuthorizationTokenService;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
@@ -12,10 +12,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static com.drofff.palindrome.R.string.police_info_url;
 import static com.drofff.palindrome.utils.HttpUtils.getFromServer;
 import static java.util.concurrent.TimeUnit.HOURS;
 
-public class UserContext {
+public class UserContextImpl implements UserContext {
 
     private static final Executor USER_CONTEXT_EXECUTOR = Executors.newSingleThreadExecutor();
 
@@ -29,7 +30,8 @@ public class UserContext {
 
     private final String userInfoUrl;
 
-    UserContext(AuthorizationTokenService authorizationTokenService, String userInfoUrl) {
+    public UserContextImpl(AuthorizationTokenService authorizationTokenService,
+                           @StringResource(id = police_info_url) String userInfoUrl) {
         this.authorizationTokenService = authorizationTokenService;
         this.userInfoUrl = userInfoUrl;
     }
@@ -62,6 +64,7 @@ public class UserContext {
         resultFuture.complete(police);
     }
 
+    @Override
     public Police getCurrentUser() {
         return userCache.get(CURRENT_USER_KEY);
     }

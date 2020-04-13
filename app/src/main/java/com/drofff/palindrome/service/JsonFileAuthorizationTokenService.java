@@ -1,7 +1,8 @@
 package com.drofff.palindrome.service;
 
+import android.app.Activity;
+
 import com.drofff.palindrome.exception.PalindromeException;
-import com.drofff.palindrome.utils.StreamUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static com.drofff.palindrome.constants.SecurityConstants.TOKEN_PARAM;
+import static com.drofff.palindrome.utils.IOUtils.readAllAsString;
 import static java.util.Calendar.DAY_OF_MONTH;
 
 public class JsonFileAuthorizationTokenService implements AuthorizationTokenService {
@@ -28,8 +30,8 @@ public class JsonFileAuthorizationTokenService implements AuthorizationTokenServ
 
     private String authorizationToken;
 
-    public JsonFileAuthorizationTokenService(File tokensDir) {
-        this.tokensDir = tokensDir;
+    public JsonFileAuthorizationTokenService(Activity contextActivity) {
+        this.tokensDir = contextActivity.getFilesDir();
     }
 
     public void saveAuthorizationToken(String token) {
@@ -73,16 +75,17 @@ public class JsonFileAuthorizationTokenService implements AuthorizationTokenServ
     }
 
     private void writeTokenToFile(String token) throws IOException {
-        String tokenPath = getJsonTokenFilePath();
-        FileOutputStream fileOutputStream = new FileOutputStream(tokenPath);
-        byte[] textBytes = token.getBytes();
-        fileOutputStream.write(textBytes);
+        String tokenFilePath = getJsonTokenFilePath();
+        try(FileOutputStream fileOutputStream = new FileOutputStream(tokenFilePath)) {
+            byte[] textBytes = token.getBytes();
+            fileOutputStream.write(textBytes);
+        }
     }
 
     public Optional<String> getAuthorizationTokenIfPresent() {
         try {
-            String authorizationToken = getAuthorizationToken();
-            return Optional.of(authorizationToken);
+            String token = getAuthorizationToken();
+            return Optional.of(token);
         } catch(PalindromeException e) {
             return Optional.empty();
         }
@@ -111,7 +114,7 @@ public class JsonFileAuthorizationTokenService implements AuthorizationTokenServ
     private String readJsonTokenFromFile() throws IOException {
         String tokenPath = getJsonTokenFilePath();
         FileInputStream fileInputStream = new FileInputStream(tokenPath);
-        return StreamUtils.readAllAsString(fileInputStream);
+        return readAllAsString(fileInputStream);
     }
 
     private String getJsonTokenFilePath() {

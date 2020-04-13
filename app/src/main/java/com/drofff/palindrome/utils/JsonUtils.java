@@ -122,4 +122,12 @@ public class JsonUtils {
         }
     }
 
+    public static JSONObject parseJSONObjectFromString(String str) {
+        try {
+            return new JSONObject(str);
+        } catch(JSONException e) {
+            throw new PalindromeException(e.getMessage());
+        }
+    }
+
 }

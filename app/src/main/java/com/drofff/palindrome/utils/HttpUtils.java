@@ -16,6 +16,7 @@ import java.net.URL;
 
 import static com.drofff.palindrome.enums.HttpMethod.GET;
 import static com.drofff.palindrome.enums.HttpMethod.POST;
+import static com.drofff.palindrome.utils.IOUtils.readAllAsString;
 
 public class HttpUtils {
 
@@ -108,7 +109,7 @@ public class HttpUtils {
 
     private static String readHttpResponseAsStr(HttpURLConnection connection) throws IOException {
         InputStream inputStream = connection.getInputStream();
-        return StreamUtils.readAllAsString(inputStream);
+        return readAllAsString(inputStream);
     }
 
 }

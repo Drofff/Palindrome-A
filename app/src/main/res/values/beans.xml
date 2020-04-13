@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bean_classes">
+        <item>com.drofff.palindrome.service.HttpLocationResolver</item>
+        <item>com.drofff.palindrome.service.JsonFileAuthorizationTokenService</item>
+        <item>com.drofff.palindrome.service.UserContextImpl</item>
+    </string-array>
+</resources>

@@ -10,17 +10,15 @@ import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.drofff.palindrome.context.BeanContext;
-import com.drofff.palindrome.context.UserContextHolder;
+import com.drofff.palindrome.context.BeanManager;
 import com.drofff.palindrome.dto.UserDto;
 import com.drofff.palindrome.exception.RequestException;
 import com.drofff.palindrome.service.AuthorizationTokenService;
-import com.drofff.palindrome.service.JsonFileAuthorizationTokenService;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -35,41 +33,42 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final Executor LOGIN_EXECUTOR = Executors.newSingleThreadExecutor();
 
+    private static boolean hasRegisteredBeans = false;
+
     private AuthorizationTokenService authorizationTokenService;
 
     private Button loginButton;
+
+    private static synchronized void beansRegistered() {
+        hasRegisteredBeans = true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         focusOnEmailField();
+        if(shouldRegisterBeans()) {
+            registerBeans();
+        }
         authorizationTokenService = getAuthorizationTokenService();
         loginButton = findViewById(R.id.login_button);
-        initUserContextIfNeeded();
         redirectToMainActivityIfAuthenticated();
         registerLoginListenerAt(loginButton);
     }
 
+    private boolean shouldRegisterBeans() {
+        return !hasRegisteredBeans;
+    }
+
+    private void registerBeans() {
+        BeanManager beanManager = new BeanManager(this);
+        beanManager.registerBeans();
+        beansRegistered();
+    }
+
     private AuthorizationTokenService getAuthorizationTokenService() {
-        if(BeanContext.haveBeanOfClass(AuthorizationTokenService.class)) {
-            return BeanContext.getBeanOfClass(AuthorizationTokenService.class);
-        }
-        File rootDir = getFilesDir();
-        AuthorizationTokenService tokenService = new JsonFileAuthorizationTokenService(rootDir);
-        BeanContext.registerBean(tokenService);
-        return tokenService;
-    }
-
-    private void initUserContextIfNeeded() {
-        if(isContextNotInitialized()) {
-            String policeInfoUrl = getResources().getString(R.string.police_info_url);
-            UserContextHolder.initContext(policeInfoUrl);
-        }
-    }
-
-    private boolean isContextNotInitialized() {
-        return !UserContextHolder.isContextInitialized();
+        return BeanContext.getBeanOfClass(AuthorizationTokenService.class);
     }
 
     private void redirectToMainActivityIfAuthenticated() {

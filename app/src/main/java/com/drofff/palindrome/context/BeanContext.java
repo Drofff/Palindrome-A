@@ -9,34 +9,41 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
+
 public class BeanContext {
 
     private static final Set<Bean> BEANS = new HashSet<>();
 
     private BeanContext() {}
 
-    public static <T> void registerBean(T object) {
+    static <T> void registerBean(T object) {
+        validateNotNull(object, "Bean should not be null");
         validateHaveNoBeanOfClass(object.getClass());
         Bean bean = new Bean(object, object.getClass());
         BEANS.add(bean);
     }
 
     private static void validateHaveNoBeanOfClass(Class<?> clazz) {
-        if(haveBeanOfClass(clazz)) {
+        if(hasBeanOfClass(clazz)) {
             throw new PalindromeException("Bean of such class is already present in the context");
         }
+    }
+
+    static boolean hasBeanOfClass(Class<?> beanClass) {
+        return getBeansOfClass(beanClass).count() > 0;
     }
 
     public static <T> T getBeanOfClass(Class<T> beanClass) {
         List<Bean> beansOfClass = getBeansOfClass(beanClass).collect(Collectors.toList());
         validateResolvedBeansOfClass(beansOfClass, beanClass);
         Bean bean = beansOfClass.get(0);
-        return (T) bean.getBean();
+        return (T) bean.getInstance();
     }
 
     private static void validateResolvedBeansOfClass(List<Bean> beans, Class<?> clazz) {
         if(beans.isEmpty()) {
-            throw new PalindromeException("Can not resolve any bean of class " + clazz.getName());
+            throw new PalindromeException("Can not find any bean of class " + clazz.getName());
         }
         if(isNotSignleton(beans)) {
             throw new PalindromeException("More than one bean of class " + clazz.getName() + " are present in the context");
@@ -45,10 +52,6 @@ public class BeanContext {
 
     private static boolean isNotSignleton(List<?> list) {
         return list.size() > 1;
-    }
-
-    public static boolean haveBeanOfClass(Class<?> beanClass) {
-        return getBeansOfClass(beanClass).count() > 0;
     }
 
     private static Stream<Bean> getBeansOfClass(Class<?> clazz) {

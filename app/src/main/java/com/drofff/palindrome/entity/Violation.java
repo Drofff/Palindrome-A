@@ -1,7 +1,5 @@
 package com.drofff.palindrome.entity;
 
-import org.json.JSONObject;
-
 public class Violation {
 
     private String carNumber;
@@ -42,8 +40,11 @@ public class Violation {
         this.violationTypeId = violationTypeId;
     }
 
-    public JSONObject toJSONObject() {
-        return (JSONObject) JSONObject.wrap(this);
+    public String toJsonStr() {
+        return "{ \"carNumber\" : \"" + carNumber +
+                "\", \"location\" : \"" + location +
+                "\", \"violationTypeId\" : \"" + violationTypeId
+                + "\" }";
     }
 
 }
