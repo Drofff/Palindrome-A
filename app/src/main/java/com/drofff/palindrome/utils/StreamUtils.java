@@ -2,7 +2,7 @@ package com.drofff.palindrome.utils;
 
 import com.drofff.palindrome.collector.QueueCollector;
 
-public class StreamUtils {
+class StreamUtils {
 
     private StreamUtils() {}
 

@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.drofff.palindrome.context.BeanContext;
 import com.drofff.palindrome.context.BeanManager;
 import com.drofff.palindrome.dto.UserDto;
+import com.drofff.palindrome.entity.ApiTokens;
 import com.drofff.palindrome.exception.RequestException;
+import com.drofff.palindrome.service.AuthenticationService;
 import com.drofff.palindrome.service.AuthorizationTokenService;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -25,7 +27,6 @@ import java.util.concurrent.Executors;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static com.drofff.palindrome.constants.SecurityConstants.TOKEN_PARAM;
 import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
 import static com.drofff.palindrome.utils.UiUtils.hideKeyboard;
 
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static boolean hasRegisteredBeans = false;
 
+    private AuthenticationService authenticationService;
     private AuthorizationTokenService authorizationTokenService;
 
     private Button loginButton;
@@ -51,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         if(shouldRegisterBeans()) {
             registerBeans();
         }
+        authenticationService = getAuthenticationService();
         authorizationTokenService = getAuthorizationTokenService();
         loginButton = findViewById(R.id.login_button);
         redirectToMainActivityIfAuthenticated();
@@ -65,6 +68,10 @@ public class LoginActivity extends AppCompatActivity {
         BeanManager beanManager = new BeanManager(this);
         beanManager.registerBeans();
         beansRegistered();
+    }
+
+    private AuthenticationService getAuthenticationService() {
+        return BeanContext.getBeanOfClass(AuthenticationService.class);
     }
 
     private AuthorizationTokenService getAuthorizationTokenService() {
@@ -114,14 +121,19 @@ public class LoginActivity extends AppCompatActivity {
         try {
             JSONObject credentialsJson = new JSONObject(userDto.toJsonStr());
             JSONObject response = postToServerWithJsonBody(authenticationUrl, credentialsJson);
-            String authorizationToken = response.getString(TOKEN_PARAM);
-            authorizationTokenService.saveAuthorizationToken(authorizationToken);
+            ApiTokens apiTokens = ApiTokens.fromJSONObject(response);
+            saveApiTokens(apiTokens);
             redirectToMainActivity();
         } catch(RequestException | JSONException e) {
             runOnUiThread(this::displayInputError);
         } finally {
             runOnUiThread(this::hideProgressBar);
         }
+    }
+
+    private void saveApiTokens(ApiTokens apiTokens) {
+        authenticationService.saveUserAuthentication(apiTokens.getUserId(), apiTokens.getAuthenticationToken());
+        authorizationTokenService.saveAuthorizationToken(apiTokens.getAuthorizationToken());
     }
 
     private void redirectToMainActivity() {

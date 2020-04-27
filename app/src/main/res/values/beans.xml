@@ -2,7 +2,9 @@
 <resources>
     <string-array name="bean_classes">
         <item>com.drofff.palindrome.service.HttpLocationResolver</item>
-        <item>com.drofff.palindrome.service.JsonFileAuthorizationTokenService</item>
+        <item>com.drofff.palindrome.service.FileServiceImpl</item>
+        <item>com.drofff.palindrome.service.AuthenticationServiceImpl</item>
+        <item>com.drofff.palindrome.service.AuthorizationTokenServiceImpl</item>
         <item>com.drofff.palindrome.service.UserContextImpl</item>
     </string-array>
 </resources>
