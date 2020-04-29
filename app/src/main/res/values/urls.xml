@@ -3,6 +3,11 @@
     <string name="add_violation_url">https://palindrome-inc.herokuapp.com/api/violations/create</string>
     <string name="authentication_url">https://palindrome-inc.herokuapp.com/api/authenticate</string>
     <string name="refresh_token_url">https://palindrome-inc.herokuapp.com/api/tokens/refresh</string>
+    <string name="register_device_url">https://palindrome-inc.herokuapp.com/api/user-devices</string>
+    <string name="get_device_requests_url">https://palindrome-inc.herokuapp.com/api/user-devices/requests?macAddress=${macAddress}</string>
+    <string name="enable_two_step_auth_url">https://palindrome-inc.herokuapp.com/api/polices/two-step-auth/enable</string>
+    <string name="disable_two_step_auth_url">https://palindrome-inc.herokuapp.com/api/polices/two-step-auth/disable</string>
+    <string name="complete_two_step_auth_url">https://palindrome-inc.herokuapp.com/authenticate/external/complete?token=${token}&amp;optionId=${optionId}</string>
     <string name="police_info_url">https://palindrome-inc.herokuapp.com/api/polices/info</string>
     <string name="violation_types_url">https://palindrome-inc.herokuapp.com/api/violations/types</string>
     <string name="get_location_url">https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${latitude},${longitude}&amp;mode=retrieveAddresses&amp;maxresults=1&amp;gen=9&amp;apiKey=cB0rD3P2fluVKeDwTAIGiRvrnHKhbXOkesVZn4Ht3zQ</string>

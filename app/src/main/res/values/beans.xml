@@ -6,5 +6,6 @@
         <item>com.drofff.palindrome.service.AuthenticationServiceImpl</item>
         <item>com.drofff.palindrome.service.AuthorizationTokenServiceImpl</item>
         <item>com.drofff.palindrome.service.UserContextImpl</item>
+        <item>com.drofff.palindrome.service.TwoStepAuthServiceImpl</item>
     </string-array>
 </resources>

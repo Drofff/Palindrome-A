@@ -15,4 +15,9 @@
     <string name="title_password">Пароль</string>
     <string name="title_email">Електронна пошта</string>
     <string name="violation_added">Порушення успішно додано</string>
+    <string name="settings_item_title">Налаштування</string>
+    <string name="enable_two_step_auth_title">Двох етапна аутентифікація</string>
+    <string name="confirm_new_device">Підтвердіть вхід з нового пристрою</string>
+    <string name="confirm_two_step_button_title">Підтвердити</string>
+    <string name="reject_two_step_button_title">Відмінити</string>
 </resources>

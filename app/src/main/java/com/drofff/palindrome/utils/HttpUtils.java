@@ -17,6 +17,7 @@ import java.net.URL;
 import static com.drofff.palindrome.enums.HttpMethod.GET;
 import static com.drofff.palindrome.enums.HttpMethod.POST;
 import static com.drofff.palindrome.utils.IOUtils.readAllAsString;
+import static com.drofff.palindrome.utils.JsonUtils.emptyJson;
 
 public class HttpUtils {
 
@@ -29,6 +30,10 @@ public class HttpUtils {
     private static final String JSON_MEDIA_TYPE = "application/json";
 
     private HttpUtils() {}
+
+    public static JSONObject postToServer(String url) {
+        return postToServerWithJsonBody(url, emptyJson());
+    }
 
     public static JSONObject postToServerWithJsonBody(String url, JSONObject jsonBody) {
         try {

@@ -25,6 +25,8 @@ public class Police {
 
     private String department;
 
+    private boolean twoStepAuthEnabled;
+
     public static Police fromJSONObject(JSONObject jsonObject) {
         try {
             return parsePoliceFromJSONObject(jsonObject);
@@ -43,6 +45,7 @@ public class Police {
         police.tokenNumber = jsonObject.getString("tokenNumber");
         police.photoUrl = jsonObject.getString("photoUrl");
         police.department = jsonObject.getString("department");
+        police.twoStepAuthEnabled = jsonObject.getBoolean("twoStepAuthEnabled");
         return police;
     }
 
@@ -112,6 +115,14 @@ public class Police {
 
     public String getFullName() {
         return joinNonNullPartsWith(" ", firstName, middleName, lastName);
+    }
+
+    public boolean isTwoStepAuthEnabled() {
+        return twoStepAuthEnabled;
+    }
+
+    public void setTwoStepAuthEnabled(boolean twoStepAuthEnabled) {
+        this.twoStepAuthEnabled = twoStepAuthEnabled;
     }
 
 }
