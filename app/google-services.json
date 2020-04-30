@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "520782457224",
+    "firebase_url": "https://palindrom-21228.firebaseio.com",
+    "project_id": "palindrom-21228",
+    "storage_bucket": "palindrom-21228.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520782457224:android:cb2cccc2f5a4c3478bf23d",
+        "android_client_info": {
+          "package_name": "com.drofff.palindrome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520782457224-gcakb0vb785pra8224k2uf0jnvrji4t7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.drofff.palindrome",
+            "certificate_hash": "5510b3d0ad7119ca65fd8321ea27691fd5ff4323"
+          }
+        },
+        {
+          "client_id": "520782457224-a11qtkts34vs1131ncv5417hjo2s3ouv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_JkmtCQEM87h9dg0KNyzoWZs51wTPtPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520782457224-a11qtkts34vs1131ncv5417hjo2s3ouv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -27,7 +27,13 @@ import java.util.concurrent.Executors;
 import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
+import static com.drofff.palindrome.constants.JsonConstants.OPTION_ID_KEY;
+import static com.drofff.palindrome.constants.JsonConstants.TOKEN_KEY;
+import static com.drofff.palindrome.constants.SecurityConstants.MESSAGE_TYPE;
+import static com.drofff.palindrome.constants.SecurityConstants.TWO_STEP_AUTH_REQUEST;
 import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
+import static com.drofff.palindrome.utils.NetUtils.getMacAddress;
 import static com.drofff.palindrome.utils.UiUtils.hideKeyboard;
 
 public class LoginActivity extends AppCompatActivity {
@@ -80,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void redirectToMainActivityIfAuthenticated() {
         if(isAuthenticated()) {
-            redirectToMainActivity();
+            redirectToNextActivity();
         }
     }
 
@@ -123,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject response = postToServerWithJsonBody(authenticationUrl, credentialsJson);
             ApiTokens apiTokens = ApiTokens.fromJSONObject(response);
             saveApiTokens(apiTokens);
-            redirectToMainActivity();
+            redirectToNextActivity();
         } catch(RequestException | JSONException e) {
             runOnUiThread(this::displayInputError);
         } finally {
@@ -136,9 +142,35 @@ public class LoginActivity extends AppCompatActivity {
         authorizationTokenService.saveAuthorizationToken(apiTokens.getAuthorizationToken());
     }
 
-    private void redirectToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+    private void redirectToNextActivity() {
+        Intent intent = isTwoStepAuthRequestForCurrentDevice() ? deviceRequestActivityIntent() :
+                new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    private boolean isTwoStepAuthRequestForCurrentDevice() {
+        return isTwoStepAuthRequest() && isRequestForCurrentDevice();
+    }
+
+    private boolean isTwoStepAuthRequest() {
+        String messageType = getIntent().getStringExtra(MESSAGE_TYPE);
+        return TWO_STEP_AUTH_REQUEST.equals(messageType);
+    }
+
+    private boolean isRequestForCurrentDevice() {
+        String destinedMacAddress = getIntent().getStringExtra(MAC_ADDRESS_KEY);
+        String originalMacAddress = getMacAddress();
+        return originalMacAddress.equalsIgnoreCase(destinedMacAddress);
+    }
+
+    private Intent deviceRequestActivityIntent() {
+        Intent contextIntent = getIntent();
+        Intent deviceRequestIntent = new Intent(this, DeviceRequestActivity.class);
+        String token = contextIntent.getStringExtra(TOKEN_KEY);
+        deviceRequestIntent.putExtra(TOKEN_KEY, token);
+        String optionId = contextIntent.getStringExtra(OPTION_ID_KEY);
+        deviceRequestIntent.putExtra(OPTION_ID_KEY, optionId);
+        return deviceRequestIntent;
     }
 
     private void displayInputError() {

@@ -10,6 +10,10 @@ public class SecurityConstants {
 
     public static final String DUE_DATE = "dueDate";
 
+    public static final String MESSAGE_TYPE = "messageType";
+
+    public static final String TWO_STEP_AUTH_REQUEST = "two-step-auth-request";
+
     private SecurityConstants() {}
 
 }

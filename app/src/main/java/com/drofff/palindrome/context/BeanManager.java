@@ -69,7 +69,7 @@ public class BeanManager {
     }
 
     private <T> void registerBeanOfClass(Class<T> clazz) {
-        Log.d(LOG_TAG, "Registering a bean of a class " + clazz.getName());
+        Log.d(LOG_TAG, "Registering a bean of class " + clazz.getName());
         Constructor<?> constructor = getClassConstructor(clazz);
         Object[] params = resolveConstructorParams(constructor);
         Object instance = constructInstance(constructor, params);
@@ -116,7 +116,7 @@ public class BeanManager {
     private void validateResolvedAllBeans(Set<Class<?>> beanClasses) {
         if(notResolvedAllBeans(beanClasses)) {
             Class<?> notResolvedBeanClass = getFirstNotResolvableBean(beanClasses);
-            throw new PalindromeException("Can not resolve dependencies of a bean " + notResolvedBeanClass.getName());
+            throw new PalindromeException("Can not resolve dependencies of bean " + notResolvedBeanClass.getName());
         }
     }
 

@@ -4,7 +4,6 @@
     <string name="authentication_url">https://palindrome-inc.herokuapp.com/api/authenticate</string>
     <string name="refresh_token_url">https://palindrome-inc.herokuapp.com/api/tokens/refresh</string>
     <string name="register_device_url">https://palindrome-inc.herokuapp.com/api/user-devices</string>
-    <string name="get_device_requests_url">https://palindrome-inc.herokuapp.com/api/user-devices/requests?macAddress=${macAddress}</string>
     <string name="enable_two_step_auth_url">https://palindrome-inc.herokuapp.com/api/polices/two-step-auth/enable</string>
     <string name="disable_two_step_auth_url">https://palindrome-inc.herokuapp.com/api/polices/two-step-auth/disable</string>
     <string name="complete_two_step_auth_url">https://palindrome-inc.herokuapp.com/authenticate/external/complete?token=${token}&amp;optionId=${optionId}</string>
