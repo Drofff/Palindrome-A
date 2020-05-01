@@ -7,16 +7,19 @@ import android.util.Log;
 import com.drofff.palindrome.R;
 import com.drofff.palindrome.exception.PalindromeException;
 import com.drofff.palindrome.exception.RequestException;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static android.os.Build.MANUFACTURER;
 import static com.drofff.palindrome.constants.JsonConstants.LABEL_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
+import static com.drofff.palindrome.constants.JsonConstants.REGISTRATION_TOKEN_KEY;
 import static com.drofff.palindrome.utils.AuthenticationUtils.getCurrentUser;
 import static com.drofff.palindrome.utils.HttpUtils.postToServer;
 import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
@@ -69,12 +72,25 @@ public class TwoStepAuthServiceImpl implements TwoStepAuthService {
         JSONObject userDeviceInfo = new JSONObject();
         userDeviceInfo.put(LABEL_KEY, getDeviceName());
         userDeviceInfo.put(MAC_ADDRESS_KEY, getMacAddress());
+        userDeviceInfo.put(REGISTRATION_TOKEN_KEY, getRegistrationToken());
         return userDeviceInfo;
     }
 
     private String getDeviceName() {
         String manufacturer = upperCaseFirstChar(MANUFACTURER);
         return manufacturer + " " + Build.MODEL;
+    }
+
+    private String getRegistrationToken() {
+        CompletableFuture<String> tokenFuture = new CompletableFuture<>();
+        FirebaseInstanceId firebaseInstanceId = FirebaseInstanceId.getInstance();
+        firebaseInstanceId.getInstanceId()
+                .addOnSuccessListener(task -> {
+                    String token = task.getToken();
+                    tokenFuture.complete(token);
+                })
+                .addOnFailureListener(e -> tokenFuture.cancel(false));
+        return tokenFuture.join();
     }
 
     private void enableTwoStepAuthForPoliceAsync() {

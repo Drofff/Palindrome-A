@@ -8,6 +8,8 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -20,8 +22,7 @@ import static com.drofff.palindrome.R.id.reject_two_step;
 import static com.drofff.palindrome.R.string.complete_two_step_auth_url;
 import static com.drofff.palindrome.constants.JsonConstants.OPTION_ID_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.TOKEN_KEY;
-import static com.drofff.palindrome.utils.FormattingUtils.resolveStringParams;
-import static com.drofff.palindrome.utils.HttpUtils.getFromServer;
+import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
 import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
 
 public class DeviceRequestActivity extends AppCompatActivity {
@@ -63,9 +64,8 @@ public class DeviceRequestActivity extends AppCompatActivity {
     private void confirmTwoStepAuth() {
         runOnUiThread(this::startProgressBar);
         String completeTwoStepAuthUrl = getResources().getString(complete_two_step_auth_url);
-        Map<String, String> requestParams = completeTwoStepAuthParams();
-        String completeTwoStepAuthUrlWithParams = resolveStringParams(completeTwoStepAuthUrl, requestParams);
-        getFromServer(completeTwoStepAuthUrlWithParams);
+        JSONObject completeTwoStepAuthBodyJson = completeTwoStepAuthParamsJson();
+        postToServerWithJsonBody(completeTwoStepAuthUrl, completeTwoStepAuthBodyJson);
         runOnUiThread(this::stopProgressBar);
         redirectToMainActivity();
     }
@@ -75,11 +75,11 @@ public class DeviceRequestActivity extends AppCompatActivity {
         progressBar.setVisibility(VISIBLE);
     }
 
-    private Map<String, String> completeTwoStepAuthParams() {
+    private JSONObject completeTwoStepAuthParamsJson() {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put(TOKEN_KEY, token);
         requestParams.put(OPTION_ID_KEY, optionId);
-        return requestParams;
+        return new JSONObject(requestParams);
     }
 
     private void stopProgressBar() {

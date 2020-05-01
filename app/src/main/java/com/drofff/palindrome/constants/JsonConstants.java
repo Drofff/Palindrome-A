@@ -8,6 +8,8 @@ public class JsonConstants {
 
     public static final String MAC_ADDRESS_KEY = "macAddress";
 
+    public static final String REGISTRATION_TOKEN_KEY = "registrationToken";
+
     public static final String TOKEN_KEY = "token";
 
     public static final String OPTION_ID_KEY = "optionId";
