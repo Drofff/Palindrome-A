@@ -95,7 +95,7 @@ public class HttpUtils {
 
     private static JSONObject requestAtUrl(String url, HttpMethod method, JSONObject body) throws IOException, JSONException {
         HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, method);
-        if(body != null) {
+        if(body != EMPTY_JSON) {
             attachJsonBodyToRequest(body, httpURLConnection);
         }
         JSONObject response = getJsonResponse(httpURLConnection);

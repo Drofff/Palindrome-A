@@ -32,7 +32,7 @@ import static com.drofff.palindrome.constants.JsonConstants.OPTION_ID_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.TOKEN_KEY;
 import static com.drofff.palindrome.constants.SecurityConstants.MESSAGE_TYPE;
 import static com.drofff.palindrome.constants.SecurityConstants.TWO_STEP_AUTH_REQUEST;
-import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
+import static com.drofff.palindrome.utils.HttpUtils.postAtUrlWithJsonBody;
 import static com.drofff.palindrome.utils.NetUtils.getMacAddress;
 import static com.drofff.palindrome.utils.UiUtils.hideKeyboard;
 
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
     private void sendAuthenticationRequest(String authenticationUrl, UserDto userDto) {
         try {
             JSONObject credentialsJson = new JSONObject(userDto.toJsonStr());
-            JSONObject response = postToServerWithJsonBody(authenticationUrl, credentialsJson);
+            JSONObject response = postAtUrlWithJsonBody(authenticationUrl, credentialsJson);
             ApiTokens apiTokens = ApiTokens.fromJSONObject(response);
             saveApiTokens(apiTokens);
             redirectToNextActivity();
