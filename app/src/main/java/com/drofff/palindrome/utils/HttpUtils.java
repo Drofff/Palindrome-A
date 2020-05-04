@@ -2,6 +2,7 @@ package com.drofff.palindrome.utils;
 
 import com.drofff.palindrome.context.BeanContext;
 import com.drofff.palindrome.enums.HttpMethod;
+import com.drofff.palindrome.exception.PalindromeException;
 import com.drofff.palindrome.exception.RequestException;
 import com.drofff.palindrome.service.AuthorizationTokenService;
 
@@ -16,8 +17,8 @@ import java.net.URL;
 
 import static com.drofff.palindrome.enums.HttpMethod.GET;
 import static com.drofff.palindrome.enums.HttpMethod.POST;
+import static com.drofff.palindrome.utils.FormattingUtils.getNamedExceptionMessage;
 import static com.drofff.palindrome.utils.IOUtils.readAllAsString;
-import static com.drofff.palindrome.utils.JsonUtils.emptyJson;
 
 public class HttpUtils {
 
@@ -29,64 +30,74 @@ public class HttpUtils {
 
     private static final String JSON_MEDIA_TYPE = "application/json";
 
+    private static final JSONObject EMPTY_JSON = null;
+
     private HttpUtils() {}
 
     public static JSONObject postToServer(String url) {
-        return postToServerWithJsonBody(url, emptyJson());
+        return postToServerWithJsonBody(url, EMPTY_JSON);
     }
 
     public static JSONObject postToServerWithJsonBody(String url, JSONObject jsonBody) {
         try {
-            return postRequestToServerWithJsonBody(url, jsonBody);
+            return authorizedRequestAtUrl(url, POST, jsonBody);
         } catch(IOException | JSONException e) {
-            throw new RequestException(e.getMessage());
-        }
-    }
-
-    private static JSONObject postRequestToServerWithJsonBody(String url, JSONObject jsonBody) throws IOException, JSONException {
-        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, POST);
-        attachAuthorizationTokenIfPresent(httpURLConnection);
-        attachJsonBodyToRequest(jsonBody, httpURLConnection);
-        JSONObject response = getJsonResponse(httpURLConnection);
-        httpURLConnection.disconnect();
-        return response;
-    }
-
-    private static void attachJsonBodyToRequest(JSONObject jsonBody, HttpURLConnection connection) throws IOException {
-        connection.setDoOutput(true);
-        try(OutputStream outputStream = connection.getOutputStream()) {
-            String jsonStr = jsonBody.toString();
-            byte[] bodyBytes = jsonStr.getBytes();
-            outputStream.write(bodyBytes);
+            throw asRequestException(e);
         }
     }
 
     public static JSONObject getFromServer(String url) {
         try {
-            return getRequestToServer(url);
+            return authorizedRequestAtUrl(url, GET, EMPTY_JSON);
         } catch(IOException | JSONException e) {
-            throw new RequestException(e.getMessage());
+            throw asRequestException(e);
         }
     }
 
-    private static JSONObject getRequestToServer(String url) throws IOException, JSONException {
-        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, GET);
-        attachAuthorizationTokenIfPresent(httpURLConnection);
-        JSONObject response = getJsonResponse(httpURLConnection);
-        httpURLConnection.disconnect();
+    private static JSONObject authorizedRequestAtUrl(String url, HttpMethod method, JSONObject body) throws IOException, JSONException {
+        HttpURLConnection request = buildJsonRequestToUrlUsingMethod(url, method);
+        attachAuthorizationToken(request);
+        if(body != null) {
+            attachJsonBodyToRequest(body, request);
+        }
+        JSONObject response = getJsonResponse(request);
+        request.disconnect();
         return response;
+    }
+
+    private static void attachAuthorizationToken(HttpURLConnection connection) {
+        AuthorizationTokenService authorizationTokenService = BeanContext.getBeanOfClass(AuthorizationTokenService.class);
+        String authorizationToken = authorizationTokenService.getAuthorizationTokenIfPresent()
+                .orElseThrow(() -> new PalindromeException("Missing authorization token"));
+        connection.setRequestProperty(AUTHORIZATION_TOKEN_HEADER, authorizationToken);
+    }
+
+    public static JSONObject postAtUrlWithJsonBody(String url, JSONObject jsonBody) {
+        try {
+            return requestAtUrl(url, POST, jsonBody);
+        } catch(IOException | JSONException e) {
+            throw asRequestException(e);
+        }
     }
 
     public static JSONObject getAtUrl(String url) {
         try {
-            return getRequestAtUrl(url);
+            return requestAtUrl(url, GET, EMPTY_JSON);
         } catch(IOException | JSONException e) {
-            throw new RequestException(e.getMessage());
+            throw asRequestException(e);
         }
     }
 
-    private static JSONObject getRequestAtUrl(String url) throws IOException, JSONException {
-        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, GET);
+    private static <T extends Exception> RequestException asRequestException(T e) {
+        String errorMessage = getNamedExceptionMessage(e);
+        return new RequestException(errorMessage);
+    }
+
+    private static JSONObject requestAtUrl(String url, HttpMethod method, JSONObject body) throws IOException, JSONException {
+        HttpURLConnection httpURLConnection = buildJsonRequestToUrlUsingMethod(url, method);
+        if(body != null) {
+            attachJsonBodyToRequest(body, httpURLConnection);
+        }
         JSONObject response = getJsonResponse(httpURLConnection);
         httpURLConnection.disconnect();
         return response;
@@ -101,10 +112,13 @@ public class HttpUtils {
         return httpURLConnection;
     }
 
-    private static void attachAuthorizationTokenIfPresent(HttpURLConnection connection) {
-        AuthorizationTokenService authorizationTokenService = BeanContext.getBeanOfClass(AuthorizationTokenService.class);
-        authorizationTokenService.getAuthorizationTokenIfPresent()
-                .ifPresent(token -> connection.setRequestProperty(AUTHORIZATION_TOKEN_HEADER, token));
+    private static void attachJsonBodyToRequest(JSONObject jsonBody, HttpURLConnection connection) throws IOException {
+        connection.setDoOutput(true);
+        try(OutputStream outputStream = connection.getOutputStream()) {
+            String jsonStr = jsonBody.toString();
+            byte[] bodyBytes = jsonStr.getBytes();
+            outputStream.write(bodyBytes);
+        }
     }
 
     private static JSONObject getJsonResponse(HttpURLConnection connection) throws IOException, JSONException {

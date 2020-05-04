@@ -36,45 +36,12 @@ public class AuthorizationTokenServiceImpl implements AuthorizationTokenService 
     }
 
     @Override
-    public void saveAuthorizationToken(String token) {
-        validateNotNull(token, "Token should not be null");
-        authorizationToken = token;
-        String json = wrapTokenIntoJson(token);
-        fileService.saveFile(authorizationTokenFilename, json);
-    }
-
-    private String wrapTokenIntoJson(String token) {
-        try {
-            return wrapTokenIntoJSONObject(token).toString();
-        } catch(JSONException e) {
-            throw new PalindromeException(e.getMessage());
-        }
-    }
-
-    private JSONObject wrapTokenIntoJSONObject(String token) throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(AUTHORIZATION_TOKEN, token);
-        long dueDateEpochSeconds = generateTokenExpirationDateEpochSeconds();
-        jsonObject.put(DUE_DATE, dueDateEpochSeconds);
-        return jsonObject;
-    }
-
-    private long generateTokenExpirationDateEpochSeconds() {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(DAY_OF_MONTH, TOKEN_TIME_TO_LIVE_DAYS);
-        Date dueDate = calendar.getTime();
-        return dueDate.getTime();
-    }
-
-    @Override
     public Optional<String> getAuthorizationTokenIfPresent() {
         try {
             String token = getAuthorizationToken();
             return Optional.of(token);
         } catch(PalindromeException e) {
-            return authenticationService.requestAuthorizationToken();
+            return refreshAuthorizationTokenIfPossible();
         }
     }
 
@@ -105,6 +72,47 @@ public class AuthorizationTokenServiceImpl implements AuthorizationTokenService 
         long dueDateEpochSeconds = jsonObject.getLong(DUE_DATE);
         validateIsFutureDateEpochSeconds(dueDateEpochSeconds, "Token has expired");
         return jsonObject.getString(AUTHORIZATION_TOKEN);
+    }
+
+    private Optional<String> refreshAuthorizationTokenIfPossible() {
+        return authenticationService.requestAuthorizationToken()
+                .map(token -> {
+                    saveAuthorizationToken(token);
+                    return token;
+                });
+    }
+
+    @Override
+    public void saveAuthorizationToken(String token) {
+        validateNotNull(token, "Token should not be null");
+        authorizationToken = token;
+        String json = wrapTokenIntoJson(token);
+        fileService.saveFile(authorizationTokenFilename, json);
+    }
+
+    private String wrapTokenIntoJson(String token) {
+        try {
+            return wrapTokenIntoJSONObject(token).toString();
+        } catch(JSONException e) {
+            throw new PalindromeException(e.getMessage());
+        }
+    }
+
+    private JSONObject wrapTokenIntoJSONObject(String token) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(AUTHORIZATION_TOKEN, token);
+        long dueDateEpochSeconds = generateTokenExpirationDateEpochSeconds();
+        jsonObject.put(DUE_DATE, dueDateEpochSeconds);
+        return jsonObject;
+    }
+
+    private long generateTokenExpirationDateEpochSeconds() {
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(DAY_OF_MONTH, TOKEN_TIME_TO_LIVE_DAYS);
+        Date dueDate = calendar.getTime();
+        return dueDate.getTime();
     }
 
 }

@@ -22,7 +22,7 @@ import static com.drofff.palindrome.constants.SecurityConstants.AUTHENTICATION_T
 import static com.drofff.palindrome.constants.SecurityConstants.AUTHORIZATION_TOKEN;
 import static com.drofff.palindrome.constants.SecurityConstants.DUE_DATE;
 import static com.drofff.palindrome.constants.SecurityConstants.USER_ID;
-import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
+import static com.drofff.palindrome.utils.HttpUtils.postAtUrlWithJsonBody;
 import static com.drofff.palindrome.utils.ValidationUtils.validateIsFutureDateEpochSeconds;
 import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
 import static java.util.Calendar.MONTH;
@@ -123,7 +123,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private Optional<String> getAuthorizationToken(JSONObject userAuthJson) {
         try {
-            JSONObject response = postToServerWithJsonBody(refreshTokenUrl, userAuthJson);
+            JSONObject response = postAtUrlWithJsonBody(refreshTokenUrl, userAuthJson);
             String authorizationToken = response.getString(AUTHORIZATION_TOKEN);
             return Optional.of(authorizationToken);
         } catch(RequestException | JSONException e) {

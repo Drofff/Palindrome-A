@@ -25,8 +25,6 @@ public class JsonUtils {
     private static final int ARRAY_ELEMENT_NAME_GROUP = 1;
     private static final int ARRAY_ELEMENT_POSITION_GROUP = 2;
 
-    private static final JSONObject emptyJSONObject = new JSONObject();
-
     private JsonUtils() {}
 
     public static JSONObject getJSONObjectAtPath(JSONObject source, String path) {
@@ -130,10 +128,6 @@ public class JsonUtils {
         } catch(JSONException e) {
             throw new PalindromeException(e.getMessage());
         }
-    }
-
-    public static JSONObject emptyJson() {
-        return emptyJSONObject;
     }
 
 }

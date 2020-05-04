@@ -4,8 +4,8 @@ import java.util.Optional;
 
 public interface AuthorizationTokenService {
 
-    void saveAuthorizationToken(String token);
-
     Optional<String> getAuthorizationTokenIfPresent();
+
+    void saveAuthorizationToken(String token);
 
 }
