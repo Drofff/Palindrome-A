@@ -1,11 +1,10 @@
 package com.drofff.palindrome.entity;
 
-import com.drofff.palindrome.exception.PalindromeException;
+import java.io.Serializable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+public class Driver implements Serializable {
 
-public class Driver {
+    private String id;
 
     private String firstName;
 
@@ -17,29 +16,12 @@ public class Driver {
 
     private String licenceNumber;
 
-    public static Driver fromJSONObject(JSONObject jsonObject) {
-        try {
-            return parseDriverDtoFromJSONObject(jsonObject);
-        } catch(JSONException e) {
-            throw new PalindromeException(e.getMessage());
-        }
+    public String getId() {
+        return id;
     }
 
-    private static Driver parseDriverDtoFromJSONObject(JSONObject jsonObject) throws JSONException {
-        String firstName = jsonObject.getString("firstName");
-        String middleName = jsonObject.getString("middleName");
-        String lastName = jsonObject.getString("lastName");
-        String photoUrl = jsonObject.getString("photoUrl");
-        String licenceNumber = jsonObject.getString("licenceNumber");
-        return new Driver(firstName, middleName, lastName, photoUrl, licenceNumber);
-    }
-
-    private Driver(String firstName, String middleName, String lastName, String photoUrl, String licenceNumber) {
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.photoUrl = photoUrl;
-        this.licenceNumber = licenceNumber;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFirstName() {

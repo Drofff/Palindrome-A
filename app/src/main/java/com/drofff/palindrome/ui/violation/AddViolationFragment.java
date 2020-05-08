@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -61,9 +60,11 @@ import static com.drofff.palindrome.utils.HttpUtils.getFromServer;
 import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
 import static com.drofff.palindrome.utils.JsonUtils.getListFromJsonByKey;
 import static com.drofff.palindrome.utils.JsonUtils.parseJSONObjectFromString;
+import static com.drofff.palindrome.utils.JsonUtils.parseObjectOfClassFromJson;
 import static com.drofff.palindrome.utils.StringUtils.isBlank;
 import static com.drofff.palindrome.utils.UiUtils.hideKeyboard;
 import static com.google.android.material.snackbar.Snackbar.LENGTH_LONG;
+import static java.util.stream.Collectors.toList;
 
 public class AddViolationFragment extends Fragment {
 
@@ -98,10 +99,9 @@ public class AddViolationFragment extends Fragment {
     private List<ViolationType> loadViolationTypes() {
         String violationTypesUrl = getResources().getString(R.string.violation_types_url);
         JSONObject violationTypesJson = getFromServer(violationTypesUrl);
-        List<JSONObject> violationTypeJsonList = getListFromJsonByKey(violationTypesJson, LIST_RESPONSE_PAYLOAD_KEY);
-        return violationTypeJsonList.stream()
-                .map(ViolationType::fromJSONObject)
-                .collect(Collectors.toList());
+        return getListFromJsonByKey(violationTypesJson, LIST_RESPONSE_PAYLOAD_KEY).stream()
+                .map(json -> parseObjectOfClassFromJson(ViolationType.class, json))
+                .collect(toList());
     }
 
     private ViolationTypesSpinnerAdapter makeViolationTypesSpinnerAdapter(List<ViolationType> violationTypes) {

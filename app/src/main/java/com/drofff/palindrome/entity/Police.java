@@ -1,10 +1,5 @@
 package com.drofff.palindrome.entity;
 
-import com.drofff.palindrome.exception.PalindromeException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import static com.drofff.palindrome.utils.StringUtils.joinNonNullPartsWith;
 
 public class Police {
@@ -26,28 +21,6 @@ public class Police {
     private String department;
 
     private boolean twoStepAuthEnabled;
-
-    public static Police fromJSONObject(JSONObject jsonObject) {
-        try {
-            return parsePoliceFromJSONObject(jsonObject);
-        } catch (JSONException e) {
-            throw new PalindromeException(e.getMessage());
-        }
-    }
-
-    private static Police parsePoliceFromJSONObject(JSONObject jsonObject) throws JSONException {
-        Police police = new Police();
-        police.id = jsonObject.getString("id");
-        police.firstName = jsonObject.getString("firstName");
-        police.lastName = jsonObject.getString("lastName");
-        police.middleName = jsonObject.getString("middleName");
-        police.position = jsonObject.getString("position");
-        police.tokenNumber = jsonObject.getString("tokenNumber");
-        police.photoUrl = jsonObject.getString("photoUrl");
-        police.department = jsonObject.getString("department");
-        police.twoStepAuthEnabled = jsonObject.getBoolean("twoStepAuthEnabled");
-        return police;
-    }
 
     public String getId() {
         return id;

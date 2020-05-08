@@ -36,7 +36,7 @@ public class FormattingUtils {
         return source.replace(paramName, param.getValue());
     }
 
-    public static <T extends Exception> String getNamedExceptionMessage(T e) {
+    static <T extends Exception> String getNamedExceptionMessage(T e) {
         String exceptionName = e.getClass().getSimpleName();
         return exceptionName + ": " + e.getMessage();
     }

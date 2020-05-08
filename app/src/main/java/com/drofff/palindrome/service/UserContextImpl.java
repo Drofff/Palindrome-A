@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 
 import static com.drofff.palindrome.R.string.police_info_url;
 import static com.drofff.palindrome.utils.HttpUtils.getFromServer;
+import static com.drofff.palindrome.utils.JsonUtils.parseObjectOfClassFromJson;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 public class UserContextImpl implements UserContext {
@@ -60,7 +61,7 @@ public class UserContextImpl implements UserContext {
 
     private void requestPoliceFromServer(CompletableFuture<Police> resultFuture) {
         JSONObject response = getFromServer(userInfoUrl);
-        Police police = Police.fromJSONObject(response);
+        Police police = parseObjectOfClassFromJson(Police.class, response);
         resultFuture.complete(police);
     }
 

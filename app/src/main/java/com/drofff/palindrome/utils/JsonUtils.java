@@ -1,22 +1,26 @@
 package com.drofff.palindrome.utils;
 
 import com.drofff.palindrome.exception.PalindromeException;
+import com.drofff.palindrome.type.FieldValue;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.drofff.palindrome.utils.ReflectionUtils.constructInstanceOfClass;
 import static com.drofff.palindrome.utils.StreamUtils.toQueue;
+import static java.lang.reflect.Modifier.isStatic;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 public class JsonUtils {
 
@@ -34,7 +38,7 @@ public class JsonUtils {
 
     private static Queue<String> parsePathSegments(String path) {
         String[] pathSegments = path.split(PATH_SEGMENTS_SEPARATOR_PATTERN);
-        return Arrays.stream(pathSegments)
+        return stream(pathSegments)
                 .collect(toQueue());
     }
 
@@ -95,7 +99,7 @@ public class JsonUtils {
     public static List<JSONObject> getListFromJsonByKey(JSONObject jsonObject, String key) {
         JSONArray jsonArray = getJSONArrayFromObjectByKey(jsonObject, key);
         return streamOfJSONArray(jsonArray)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private static JSONArray getJSONArrayFromObjectByKey(JSONObject jsonObject, String key) {
@@ -126,6 +130,60 @@ public class JsonUtils {
         try {
             return new JSONObject(str);
         } catch(JSONException e) {
+            throw new PalindromeException(e.getMessage());
+        }
+    }
+
+    public static <T> T parseObjectOfClassFromJson(Class<T> objClass, JSONObject jsonObject) {
+        List<Field> nonStaticFields = getNonStaticFieldsOfClass(objClass);
+        List<FieldValue> fieldValues = getFieldValuesFromJson(nonStaticFields, jsonObject);
+        T object = constructInstanceOfClass(objClass);
+        fieldValues.forEach(fieldValue -> putFieldValueIntoObject(fieldValue, object));
+        return object;
+    }
+
+    private static List<Field> getNonStaticFieldsOfClass(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        return stream(fields)
+                .filter(JsonUtils::isNonStaticField)
+                .collect(toList());
+    }
+
+    private static boolean isNonStaticField(Field field) {
+        return !isStaticField(field);
+    }
+
+    private static boolean isStaticField(Field field) {
+        int fieldModifiers = field.getModifiers();
+        return isStatic(fieldModifiers);
+    }
+
+    private static List<FieldValue> getFieldValuesFromJson(List<Field> fields, JSONObject jsonObject) {
+        return fields.stream()
+                .map(field -> getFieldValueFromJson(field, jsonObject))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
+    }
+
+    private static Optional<FieldValue> getFieldValueFromJson(Field field, JSONObject jsonObject) {
+        try {
+            String fieldName = field.getName();
+            Object value = jsonObject.get(fieldName);
+            FieldValue fieldValue = new FieldValue(field, value);
+            return Optional.of(fieldValue);
+        } catch(JSONException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static void putFieldValueIntoObject(FieldValue fieldValue, Object object) {
+        try {
+            Field destinedField = fieldValue.getField();
+            Object value = fieldValue.getValue();
+            destinedField.setAccessible(true);
+            destinedField.set(object, value);
+        } catch(IllegalAccessException e) {
             throw new PalindromeException(e.getMessage());
         }
     }

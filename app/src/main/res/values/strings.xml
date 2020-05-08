@@ -26,4 +26,16 @@
     <string name="home_text">Вся необхідна інформація про водіїв доступна тут і зараз. Здійснюйте пошук за ПІБ водія аби переглянути номер його посвідчення та якими автомобілями він володіє. Ми прагнемо зробити всі процеси вашої роботи максимально ефективними. Адже безпека на дорозі - це головне!</string>
     <string name="team_signature">Команда Palindrome</string>
     <string name="loading_text">Завантаження..</string>
+    <string name="nothing_found_text">Нічого не знайдено</string>
+    <string name="violations_title">Порушення</string>
+    <string name="cars_title">Автомобілі</string>
+    <string name="car_number_title">Номер:</string>
+    <string name="body_number_title">VIN код:</string>
+    <string name="weight_title">Вага:</string>
+    <string name="engine_title">Двигун:</string>
+    <string name="status_title">Статус:</string>
+    <string name="location_title">Місце фіксації:</string>
+    <string name="date_time_title">Дата та час:</string>
+    <string name="paid_text">Оплачено</string>
+    <string name="unpaid_text">Очікує оплати</string>
 </resources>

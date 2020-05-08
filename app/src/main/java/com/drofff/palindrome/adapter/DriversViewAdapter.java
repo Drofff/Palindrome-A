@@ -18,9 +18,11 @@ import static com.drofff.palindrome.R.layout.driver_view;
 public class DriversViewAdapter extends RecyclerView.Adapter<DriverViewHolder> {
 
     private final List<Driver> drivers;
+    private final String searchQuery;
 
-    public DriversViewAdapter(List<Driver> drivers) {
+    public DriversViewAdapter(List<Driver> drivers, String searchQuery) {
         this.drivers = drivers;
+        this.searchQuery = searchQuery;
     }
 
     @NonNull
@@ -28,7 +30,7 @@ public class DriversViewAdapter extends RecyclerView.Adapter<DriverViewHolder> {
     public DriverViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View driverView = from(context).inflate(driver_view, parent, false);
-        return new DriverViewHolder(driverView);
+        return new DriverViewHolder(driverView, searchQuery);
     }
 
     @Override

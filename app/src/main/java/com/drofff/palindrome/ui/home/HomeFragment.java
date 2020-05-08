@@ -35,7 +35,7 @@ public class HomeFragment extends Fragment {
     private void registerSearchListenerAt(EditText searchField) {
         searchField.setOnKeyListener((view, keyCode, keyEvent) -> {
             processSearchEvent(searchField, keyEvent);
-            return true;
+            return false;
         });
     }
 
