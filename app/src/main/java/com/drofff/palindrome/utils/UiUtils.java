@@ -39,7 +39,8 @@ public class UiUtils {
 
     public static <T> void putMappedTextViewValuesIntoView(T source, View view) {
         Map<Integer, Field> textViewIdMappings = getTextViewIdMappingsOfClass(source.getClass());
-        textViewIdMappings.entrySet()
+        textViewIdMappings.entrySet().stream()
+                .filter(textViewMapping -> hasNonNullValueOfField(source, textViewMapping.getValue()))
                 .forEach(textViewMapping -> mapTextViewValueOfSource(source, textViewMapping, view));
     }
 
@@ -64,6 +65,11 @@ public class UiUtils {
         TextViewId textViewId = field.getAnnotation(TextViewId.class);
         validateNotNull(textViewId, "Field should obtain TextViewId annotation");
         return textViewId.value();
+    }
+
+    private static <T> boolean hasNonNullValueOfField(T source, Field field) {
+        Object fieldValue = getFieldValueOfObject(field, source);
+        return fieldValue != null;
     }
 
     private static <T> void mapTextViewValueOfSource(T source, Map.Entry<Integer, Field> textViewMapping, View rootView) {

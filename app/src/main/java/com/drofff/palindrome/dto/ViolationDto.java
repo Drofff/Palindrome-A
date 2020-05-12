@@ -1,22 +1,25 @@
 package com.drofff.palindrome.dto;
 
+import com.drofff.palindrome.annotation.DateTime;
+import com.drofff.palindrome.entity.ViolationType;
 import com.drofff.palindrome.type.Displayable;
 
 public class ViolationDto implements Displayable {
 
-    private String violationType;
+    private ViolationType violationType;
 
     private String location;
 
+    @DateTime(format = "kk:mm dd.MM.yyyy")
     private String dateTime;
 
     private boolean paid;
 
-    public String getViolationType() {
+    public ViolationType getViolationType() {
         return violationType;
     }
 
-    public void setViolationType(String violationType) {
+    public void setViolationType(ViolationType violationType) {
         this.violationType = violationType;
     }
 

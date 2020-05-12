@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/violation_details_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="151dp"
         android:backgroundTint="@color/card_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,100 +18,112 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView3"
         app:layout_constraintVertical_bias="0.0">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/violation_details"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/status_value"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/violation_details"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/status_title"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.077"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.165" />
+                android:layout_height="match_parent"
+                android:paddingStart="0dp"
+                android:paddingEnd="20dp">
 
-            <TextView
-                android:id="@+id/location_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/location_title"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/status_value"
-                app:layout_constraintTop_toBottomOf="@+id/status_value"
-                app:layout_constraintVertical_bias="0.0" />
+                <TextView
+                    android:id="@+id/status_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/status_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.077"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.166" />
 
-            <TextView
-                android:id="@+id/date_time_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/date_time_title"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/location_value"
-                app:layout_constraintTop_toBottomOf="@+id/location_value"
-                app:layout_constraintVertical_bias="0.0" />
+                <TextView
+                    android:id="@+id/location_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/location_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/status_value"
+                    app:layout_constraintTop_toBottomOf="@+id/status_value"
+                    app:layout_constraintVertical_bias="0.0" />
 
-            <TextView
-                android:id="@+id/status_value_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="19dp"
-                android:fontFamily=""
-                android:text="@string/loading_text"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/status_value"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.165" />
+                <TextView
+                    android:id="@+id/date_time_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/date_time_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/location_value"
+                    app:layout_constraintTop_toBottomOf="@+id/location_value"
+                    app:layout_constraintVertical_bias="0.0" />
 
-            <TextView
-                android:id="@+id/location_value_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="19dp"
-                android:fontFamily=""
-                android:text="@string/loading_text"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/location_value"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.381" />
+                <TextView
+                    android:id="@+id/status_value_view"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="19dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily=""
+                    android:text="@string/loading_text"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/status_value"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.105" />
 
-            <TextView
-                android:id="@+id/date_time_value_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="19dp"
-                android:fontFamily=""
-                android:text="@string/loading_text"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/date_time_value"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.602" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/location_value_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="19dp"
+                    android:layout_marginTop="17dp"
+                    android:fontFamily=""
+                    android:text="@string/loading_text"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/location_value"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/location_value"
+                    app:layout_constraintTop_toBottomOf="@+id/status_value_view"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/date_time_value_input"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="19dp"
+                    android:layout_marginTop="17dp"
+                    android:fontFamily=""
+                    android:text="@string/loading_text"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/date_time_value"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/date_time_value"
+                    app:layout_constraintTop_toBottomOf="@+id/location_value_view"
+                    app:layout_constraintVertical_bias="0.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </HorizontalScrollView>
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:backgroundTint="@color/background_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -141,6 +153,7 @@
                 android:layout_width="261dp"
                 android:layout_height="50dp"
                 android:text="@string/loading_text"
+                android:gravity="center"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

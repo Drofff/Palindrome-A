@@ -1,5 +1,7 @@
 package com.drofff.palindrome.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Queue;
 
@@ -39,6 +41,11 @@ public class FormattingUtils {
     static <T extends Exception> String getNamedExceptionMessage(T e) {
         String exceptionName = e.getClass().getSimpleName();
         return exceptionName + ": " + e.getMessage();
+    }
+
+    static String dateToStrByFormat(Date date, String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        return dateFormat.format(date);
     }
 
 }

@@ -19,8 +19,10 @@ import com.drofff.palindrome.adapter.ArrayViewAdapter;
 import com.drofff.palindrome.dto.CarDto;
 import com.drofff.palindrome.dto.ViolationDto;
 import com.drofff.palindrome.entity.Driver;
+import com.drofff.palindrome.listener.DriverDetailsTabListener;
 import com.drofff.palindrome.view.holder.strategy.CarDisplayStrategy;
 import com.drofff.palindrome.view.holder.strategy.ViolationDisplayStrategy;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
 
@@ -37,6 +39,7 @@ import static com.drofff.palindrome.R.id.driver_full_name_value;
 import static com.drofff.palindrome.R.id.driver_image_value;
 import static com.drofff.palindrome.R.id.driver_licence_number_value;
 import static com.drofff.palindrome.R.id.driver_loader;
+import static com.drofff.palindrome.R.id.driver_tabs;
 import static com.drofff.palindrome.R.layout.car_view;
 import static com.drofff.palindrome.R.layout.violation_view;
 import static com.drofff.palindrome.R.string.get_driver_cars_url;
@@ -72,6 +75,7 @@ public class DriverActivity extends AppCompatActivity {
         Driver driver = getDriverFromIntent();
         displayDriver(driver);
         loadDriverDetailsAsync(driver);
+        initDetailsViewTab();
     }
 
     private void enableHomeButton() {
@@ -169,6 +173,16 @@ public class DriverActivity extends AppCompatActivity {
     private void hideProgressBar() {
         ProgressBar progressBar = findViewById(driver_loader);
         progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void initDetailsViewTab() {
+        TabLayout detailsViewTab = findViewById(driver_tabs);
+        detailsViewTab.addOnTabSelectedListener(getDriverDetailsTabListener());
+    }
+
+    private DriverDetailsTabListener getDriverDetailsTabListener() {
+        RecyclerView detailsView = findViewById(details_view);
+        return new DriverDetailsTabListener(detailsView, carsViewAdapter, violationsViewAdapter);
     }
 
     @Override

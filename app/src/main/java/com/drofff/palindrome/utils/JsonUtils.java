@@ -1,5 +1,6 @@
 package com.drofff.palindrome.utils;
 
+import com.drofff.palindrome.annotation.DateTime;
 import com.drofff.palindrome.exception.PalindromeException;
 import com.drofff.palindrome.type.FieldValue;
 
@@ -8,19 +9,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.drofff.palindrome.utils.DateUtils.dateOf;
+import static com.drofff.palindrome.utils.FormattingUtils.dateToStrByFormat;
 import static com.drofff.palindrome.utils.ReflectionUtils.constructInstanceOfClass;
+import static com.drofff.palindrome.utils.ReflectionUtils.isPrimitiveType;
 import static com.drofff.palindrome.utils.StreamUtils.toQueue;
+import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
 
 public class JsonUtils {
 
@@ -111,7 +117,7 @@ public class JsonUtils {
     }
 
     private static Stream<JSONObject> streamOfJSONArray(JSONArray jsonArray) {
-        return IntStream.range(0, jsonArray.length())
+        return range(0, jsonArray.length())
                 .mapToObj(position -> getJSONArrayElementAtPositionIfPresent(jsonArray, position))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
@@ -160,21 +166,90 @@ public class JsonUtils {
 
     private static List<FieldValue> getFieldValuesFromJson(List<Field> fields, JSONObject jsonObject) {
         return fields.stream()
+                .filter(field -> hasNonNullValueForField(jsonObject, field))
                 .map(field -> getFieldValueFromJson(field, jsonObject))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
     }
 
+    private static boolean hasNonNullValueForField(JSONObject jsonObject, Field field) {
+        return jsonObject.has(field.getName());
+    }
+
     private static Optional<FieldValue> getFieldValueFromJson(Field field, JSONObject jsonObject) {
         try {
-            String fieldName = field.getName();
-            Object value = jsonObject.get(fieldName);
+            Object value = parseValueOfFieldFromJson(field, jsonObject);
             FieldValue fieldValue = new FieldValue(field, value);
             return Optional.of(fieldValue);
         } catch(JSONException e) {
             return Optional.empty();
         }
+    }
+
+    private static Object parseValueOfFieldFromJson(Field field, JSONObject jsonObject) throws JSONException {
+        if(hasDateTimeAnnotation(field)) {
+            return getDateTimeFieldValueFromJson(field, jsonObject);
+        }
+        if(isNestedObjectField(field)) {
+            return getNestedObjectFieldValueFromJson(field, jsonObject);
+        }
+        return jsonObject.get(field.getName());
+    }
+
+    private static boolean hasDateTimeAnnotation(Field field) {
+        return field.getAnnotation(DateTime.class) != null;
+    }
+
+    private static String getDateTimeFieldValueFromJson(Field field, JSONObject jsonObject) throws JSONException {
+        JSONArray dateTime = jsonObject.getJSONArray(field.getName());
+        Integer[] dateArray = toIntArray(dateTime);
+        Date date = dateOf(dateArray);
+        String dateTimeFormat = getDateTimeFormatOfField(field);
+        return dateToStrByFormat(date, dateTimeFormat);
+    }
+
+    private static Integer[] toIntArray(JSONArray jsonArray) {
+        return range(0, jsonArray.length())
+                .mapToObj(position -> getIntFromJSONArrayAtPosition(jsonArray, position))
+                .collect(toList())
+                .toArray(new Integer[] {});
+    }
+
+    private static int getIntFromJSONArrayAtPosition(JSONArray jsonArray, int position) {
+        try {
+            return jsonArray.getInt(position);
+        } catch(JSONException e) {
+            throw new PalindromeException(e.getMessage());
+        }
+    }
+
+    private static String getDateTimeFormatOfField(Field field) {
+        DateTime dateTimeAnnotation = field.getAnnotation(DateTime.class);
+        validateNotNull(dateTimeAnnotation, "Missing DateTime annotation");
+        return dateTimeAnnotation.format();
+    }
+
+    private static boolean isNestedObjectField(Field field) {
+        return hasNotPrimitiveType(field) && hasNotStringType(field);
+    }
+
+    private static boolean hasNotPrimitiveType(Field field) {
+        return !isPrimitiveType(field.getType());
+    }
+
+    private static boolean hasNotStringType(Field field) {
+        return !hasStringType(field);
+    }
+
+    private static boolean hasStringType(Field field) {
+        Class<?> fieldType = field.getType();
+        return String.class.isAssignableFrom(fieldType);
+    }
+
+    private static Object getNestedObjectFieldValueFromJson(Field nestedObjectField, JSONObject jsonObject) throws JSONException {
+        JSONObject valueJson = jsonObject.getJSONObject(nestedObjectField.getName());
+        return parseObjectOfClassFromJson(nestedObjectField.getType(), valueJson);
     }
 
     private static void putFieldValueIntoObject(FieldValue fieldValue, Object object) {

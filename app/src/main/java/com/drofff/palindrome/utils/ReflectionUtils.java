@@ -4,8 +4,14 @@ import com.drofff.palindrome.exception.PalindromeException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 public class ReflectionUtils {
+
+    private static final List<Class<?>> BOXED_PRIMITIVE_CLASSES = asList(Integer.class, Long.class,
+            Float.class, Double.class, Short.class, Byte.class, Character.class, Boolean.class, Void.class);
 
     private ReflectionUtils() {}
 
@@ -41,6 +47,15 @@ public class ReflectionUtils {
         } catch(IllegalAccessException e) {
             throw new PalindromeException(e.getMessage());
         }
+    }
+
+    static boolean isPrimitiveType(Class<?> type) {
+        return type.isPrimitive() || isBoxedPrimitiveType(type);
+    }
+
+    private static boolean isBoxedPrimitiveType(Class<?> type) {
+        return BOXED_PRIMITIVE_CLASSES.stream()
+                .anyMatch(boxedPrimitive -> boxedPrimitive.isAssignableFrom(type));
     }
 
 }

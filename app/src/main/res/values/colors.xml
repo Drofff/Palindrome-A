@@ -6,4 +6,5 @@
     <color name="buttons">#3F51B5</color>
     <color name="card_background">#e8e6e1</color>
     <color name="background_default">#fafafa</color>
+    <color name="success">#32a852</color>
 </resources>

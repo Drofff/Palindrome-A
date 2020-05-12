@@ -12,6 +12,6 @@
     <string name="violation_types_url">https://palindrome-inc.herokuapp.com/api/violations/types</string>
     <string name="get_location_url">https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${latitude},${longitude}&amp;mode=retrieveAddresses&amp;maxresults=1&amp;gen=9&amp;apiKey=cB0rD3P2fluVKeDwTAIGiRvrnHKhbXOkesVZn4Ht3zQ</string>
     <string name="find_drivers_url">https://palindrome-inc.herokuapp.com/api/drivers?name=${name}</string>
-    <string name="get_driver_cars_url">http://www.mocky.io/v2/5eb55ff53100006a0069953b</string>
-    <string name="get_driver_violations_url"></string>
+    <string name="get_driver_cars_url">https://palindrome-inc.herokuapp.com/api/drivers/${id}/cars</string>
+    <string name="get_driver_violations_url">https://palindrome-inc.herokuapp.com/api/drivers/${id}/violations</string>
 </resources>

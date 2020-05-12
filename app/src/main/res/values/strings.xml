@@ -38,4 +38,5 @@
     <string name="date_time_title">Дата та час:</string>
     <string name="paid_text">Оплачено</string>
     <string name="unpaid_text">Очікує оплати</string>
+    <string name="no_details_text">Тут нічого..</string>
 </resources>

@@ -1,13 +1,12 @@
 package com.drofff.palindrome.dto;
 
 import com.drofff.palindrome.R;
+import com.drofff.palindrome.annotation.DateTime;
 import com.drofff.palindrome.annotation.TextViewId;
 import com.drofff.palindrome.type.Displayable;
+import com.drofff.palindrome.type.ListedName;
 
 public class CarDto implements Displayable {
-
-    @TextViewId(R.id.car_model)
-    private String label;
 
     @TextViewId(R.id.car_number_value)
     private String number;
@@ -18,26 +17,24 @@ public class CarDto implements Displayable {
     @TextViewId(R.id.color_value)
     private String color;
 
-    private String bodyType;
+    private ListedName brand;
+
+    private String model;
+
+    private ListedName bodyType;
 
     @TextViewId(R.id.weigh_value)
     private Double weight;
 
-    private String licenceCategory;
+    private ListedName licenceCategory;
 
-    @TextViewId(R.id.engine_value)
-    private String engine;
+    private Double engineVolume;
 
+    private ListedName engineType;
+
+    @DateTime(format = "dd.MM.yyyy")
     @TextViewId(R.id.registration_date_value)
     private String registrationDate;
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
     public String getNumber() {
         return number;
@@ -63,11 +60,27 @@ public class CarDto implements Displayable {
         this.color = color;
     }
 
-    public String getBodyType() {
+    public ListedName getBrand() {
+        return brand;
+    }
+
+    public void setBrand(ListedName brand) {
+        this.brand = brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public ListedName getBodyType() {
         return bodyType;
     }
 
-    public void setBodyType(String bodyType) {
+    public void setBodyType(ListedName bodyType) {
         this.bodyType = bodyType;
     }
 
@@ -79,20 +92,28 @@ public class CarDto implements Displayable {
         this.weight = weight;
     }
 
-    public String getLicenceCategory() {
+    public ListedName getLicenceCategory() {
         return licenceCategory;
     }
 
-    public void setLicenceCategory(String licenceCategory) {
+    public void setLicenceCategory(ListedName licenceCategory) {
         this.licenceCategory = licenceCategory;
     }
 
-    public String getEngine() {
-        return engine;
+    public Double getEngineVolume() {
+        return engineVolume;
     }
 
-    public void setEngine(String engine) {
-        this.engine = engine;
+    public void setEngineVolume(Double engineVolume) {
+        this.engineVolume = engineVolume;
+    }
+
+    public ListedName getEngineType() {
+        return engineType;
+    }
+
+    public void setEngineType(ListedName engineType) {
+        this.engineType = engineType;
     }
 
     public String getRegistrationDate() {
