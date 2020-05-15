@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 import static com.bumptech.glide.Glide.with;
@@ -40,6 +41,7 @@ import static com.drofff.palindrome.R.id.driver_image_value;
 import static com.drofff.palindrome.R.id.driver_licence_number_value;
 import static com.drofff.palindrome.R.id.driver_loader;
 import static com.drofff.palindrome.R.id.driver_tabs;
+import static com.drofff.palindrome.R.id.no_details_text_view;
 import static com.drofff.palindrome.R.layout.car_view;
 import static com.drofff.palindrome.R.layout.violation_view;
 import static com.drofff.palindrome.R.string.get_driver_cars_url;
@@ -148,7 +150,14 @@ public class DriverActivity extends AppCompatActivity {
         String getDriverCarsUrl = getUrlWithDriverIdByResourceId(driver, get_driver_cars_url);
         JSONObject response = getFromServer(getDriverCarsUrl);
         List<CarDto> carDtos = parseListOfClassFromJson(CarDto.class, response);
-        runOnUiThread(() -> carsViewAdapter.updateDisplayedElementsList(carDtos));
+        runOnUiThread(() -> updateCarsList(carDtos));
+    }
+
+    private void updateCarsList(List<CarDto> cars) {
+        carsViewAdapter.updateDisplayedElementsList(cars);
+        int visibility = cars.isEmpty() ? VISIBLE : INVISIBLE;
+        TextView noDetailsView = findViewById(no_details_text_view);
+        noDetailsView.setVisibility(visibility);
     }
 
     private void loadDriverViolations(Driver driver) {

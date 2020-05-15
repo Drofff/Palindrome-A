@@ -1,6 +1,8 @@
 package com.drofff.palindrome.listener;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +12,9 @@ import com.drofff.palindrome.dto.ViolationDto;
 import com.drofff.palindrome.type.Displayable;
 import com.google.android.material.tabs.TabLayout;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static com.drofff.palindrome.R.id.no_details_text_view;
 import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
 
 public class DriverDetailsTabListener implements TabLayout.BaseOnTabSelectedListener<TabLayout.Tab> {
@@ -33,6 +38,22 @@ public class DriverDetailsTabListener implements TabLayout.BaseOnTabSelectedList
         ArrayViewAdapter<? extends Displayable> selectedAdapter = tab.getPosition() == 0 ? carsViewAdapter :
                 violationsViewAdapter;
         detailsView.setAdapter(selectedAdapter);
+        updateNoDetailsTextViewWithAdapter(selectedAdapter);
+    }
+
+    private void updateNoDetailsTextViewWithAdapter(ArrayViewAdapter<?> adapter) {
+        int visibility = isEmptyAdapter(adapter) ? VISIBLE : INVISIBLE;
+        TextView noDetailsTextView = getNoDetailsTextView();
+        noDetailsTextView.setVisibility(visibility);
+    }
+
+    private boolean isEmptyAdapter(ArrayViewAdapter<?> adapter) {
+        return adapter.getItemCount() == 0;
+    }
+
+    private TextView getNoDetailsTextView() {
+        View rootView = detailsView.getRootView();
+        return rootView.findViewById(no_details_text_view);
     }
 
     @Override
