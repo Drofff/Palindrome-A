@@ -39,4 +39,7 @@
     <string name="paid_text">Оплачено</string>
     <string name="unpaid_text">Очікує оплати</string>
     <string name="no_details_text">Тут нічого..</string>
+    <string name="submit_button_text">Підтвердити</string>
+    <string name="two_step_auth_code">Код аутентифікації</string>
+    <string name="two_step_code_sent_text">На вашу електронну пошту був відправлений код двох факторної аутентифікації. Впишіть його в поле вище аби підтвердити свою особистість.</string>
 </resources>

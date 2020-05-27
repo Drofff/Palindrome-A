@@ -14,4 +14,5 @@
     <string name="find_drivers_url">https://palindrome-inc.herokuapp.com/api/drivers?name=${name}</string>
     <string name="get_driver_cars_url">https://palindrome-inc.herokuapp.com/api/drivers/${id}/cars</string>
     <string name="get_driver_violations_url">https://palindrome-inc.herokuapp.com/api/drivers/${id}/violations</string>
+    <string name="two_step_auth_url">https://palindrome-inc.herokuapp.com/api/two-step-auth</string>
 </resources>

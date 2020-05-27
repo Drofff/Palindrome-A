@@ -28,10 +28,12 @@ import static android.graphics.Color.RED;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
+import static com.drofff.palindrome.constants.JsonConstants.MESSAGE_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.OPTION_ID_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.TOKEN_KEY;
 import static com.drofff.palindrome.constants.SecurityConstants.MESSAGE_TYPE;
 import static com.drofff.palindrome.constants.SecurityConstants.TWO_STEP_AUTH_REQUEST;
+import static com.drofff.palindrome.constants.SecurityConstants.USER_ID;
 import static com.drofff.palindrome.utils.HttpUtils.postAtUrlWithJsonBody;
 import static com.drofff.palindrome.utils.JsonUtils.parseObjectOfClassFromJson;
 import static com.drofff.palindrome.utils.NetUtils.getMacAddress;
@@ -128,14 +130,38 @@ public class LoginActivity extends AppCompatActivity {
         try {
             JSONObject credentialsJson = new JSONObject(userDto.toJsonStr());
             JSONObject response = postAtUrlWithJsonBody(authenticationUrl, credentialsJson);
-            ApiTokens apiTokens = parseObjectOfClassFromJson(ApiTokens.class, response);
-            saveApiTokens(apiTokens);
-            redirectToNextActivity();
+            acceptAuthenticationResponse(response);
         } catch(RequestException | JSONException e) {
             runOnUiThread(this::displayInputError);
         } finally {
             runOnUiThread(this::hideProgressBar);
         }
+    }
+
+    private void acceptAuthenticationResponse(JSONObject response) throws JSONException {
+        if(isSecondFactorNeeded(response)) {
+            redirectToTwoStepAuthActivityWithJson(response);
+        } else {
+            ApiTokens apiTokens = parseObjectOfClassFromJson(ApiTokens.class, response);
+            saveApiTokens(apiTokens);
+            redirectToNextActivity();
+        }
+    }
+
+    private boolean isSecondFactorNeeded(JSONObject jsonObject) {
+        try {
+            jsonObject.getString(MESSAGE_KEY);
+            return true;
+        } catch(JSONException e) {
+            return false;
+        }
+    }
+
+    private void redirectToTwoStepAuthActivityWithJson(JSONObject jsonObject) throws JSONException {
+        String userId = jsonObject.getString(USER_ID);
+        Intent intent = new Intent(this, TwoStepAuthActivity.class);
+        intent.putExtra(USER_ID, userId);
+        startActivity(intent);
     }
 
     private void saveApiTokens(ApiTokens apiTokens) {

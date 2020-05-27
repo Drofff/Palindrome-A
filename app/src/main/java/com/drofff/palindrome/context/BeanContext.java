@@ -34,6 +34,7 @@ public class BeanContext {
         return getBeansOfClass(beanClass).count() > 0;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T getBeanOfClass(Class<T> beanClass) {
         List<Bean> beansOfClass = getBeansOfClass(beanClass).collect(Collectors.toList());
         validateResolvedBeansOfClass(beansOfClass, beanClass);

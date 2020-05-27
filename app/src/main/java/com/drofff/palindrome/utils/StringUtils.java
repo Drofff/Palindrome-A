@@ -30,6 +30,10 @@ public class StringUtils {
         return str.length() > maxLength;
     }
 
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
+    }
+
     public static boolean isBlank(String str) {
         return str.trim().isEmpty();
     }

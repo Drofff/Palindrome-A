@@ -20,11 +20,13 @@
         android:roundIcon="@drawable/palindrome_icon_big"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DriverActivity"
+        <activity android:name=".TwoStepAuthActivity"></activity>
+        <activity
+            android:name=".DriverActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".SearchActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -44,7 +46,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

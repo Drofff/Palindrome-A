@@ -14,6 +14,8 @@ public class JsonConstants {
 
     public static final String OPTION_ID_KEY = "optionId";
 
+    public static final String MESSAGE_KEY = "message";
+
     private JsonConstants() {}
 
 }

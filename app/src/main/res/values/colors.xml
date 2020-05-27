@@ -7,4 +7,6 @@
     <color name="card_background">#e8e6e1</color>
     <color name="background_default">#fafafa</color>
     <color name="success">#32a852</color>
+    <color name="hint_card_text">#01579b</color>
+    <color name="hint_card_background">#e1f5fe</color>
 </resources>
