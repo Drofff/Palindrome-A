@@ -10,6 +10,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.drofff.palindrome.DeviceRequestActivity;
 import com.drofff.palindrome.R;
+import com.drofff.palindrome.context.BeanContext;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static androidx.core.app.NotificationCompat.PRIORITY_MAX;
-import static com.drofff.palindrome.R.string.refresh_token_url;
+import static com.drofff.palindrome.R.string.update_registration_token_url;
 import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.OPTION_ID_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.REGISTRATION_TOKEN_KEY;
@@ -101,12 +102,21 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String token) {
-        SERVICE_EXECUTOR.execute(() -> refreshRegistrationToken(token));
+        SERVICE_EXECUTOR.execute(() -> {
+            if(isAuthenticated()) {
+                refreshRegistrationToken(token);
+            }
+        });
+    }
+
+    private boolean isAuthenticated() {
+        AuthorizationTokenService authorizationTokenService = BeanContext.getBeanOfClass(AuthorizationTokenService.class);
+        return authorizationTokenService.getAuthorizationTokenIfPresent().isPresent();
     }
 
     private void refreshRegistrationToken(String token) {
         String refreshRegistrationTokenUrl = getBaseContext().getResources()
-                .getString(refresh_token_url);
+                .getString(update_registration_token_url);
         Map<String, String> refreshParams = refreshRegistrationTokenParams(token);
         String refreshRegistrationTokenUrlWithParams = resolveStringParams(refreshRegistrationTokenUrl,
                 refreshParams);
