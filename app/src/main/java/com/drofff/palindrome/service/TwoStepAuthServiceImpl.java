@@ -12,15 +12,19 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static android.os.Build.MANUFACTURER;
+import static com.drofff.palindrome.R.string.update_registration_token_url;
 import static com.drofff.palindrome.constants.JsonConstants.LABEL_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.REGISTRATION_TOKEN_KEY;
 import static com.drofff.palindrome.utils.AuthenticationUtils.getCurrentUser;
+import static com.drofff.palindrome.utils.FormattingUtils.resolveStringParams;
 import static com.drofff.palindrome.utils.HttpUtils.postToServer;
 import static com.drofff.palindrome.utils.HttpUtils.postToServerWithJsonBody;
 import static com.drofff.palindrome.utils.NetUtils.getMacAddress;
@@ -140,6 +144,23 @@ public class TwoStepAuthServiceImpl implements TwoStepAuthService {
             twoStepAuthEnabled = getCurrentUser().isTwoStepAuthEnabled();
         }
         return twoStepAuthEnabled;
+    }
+
+    @Override
+    public void updateRegistrationToken(String token) {
+        String updateRegistrationTokenUrl = contextActivity.getResources()
+                .getString(update_registration_token_url);
+        Map<String, String> updateParams = updateRegistrationTokenParams(token);
+        String updateRegistrationTokenUrlWithParams = resolveStringParams(updateRegistrationTokenUrl,
+                updateParams);
+        postToServer(updateRegistrationTokenUrlWithParams);
+    }
+
+    private Map<String, String> updateRegistrationTokenParams(String token) {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put(REGISTRATION_TOKEN_KEY, token);
+        requestParams.put(MAC_ADDRESS_KEY, getMacAddress());
+        return requestParams;
     }
 
 }

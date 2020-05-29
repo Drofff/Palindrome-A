@@ -6,9 +6,9 @@ import com.drofff.palindrome.exception.PalindromeException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static com.drofff.palindrome.utils.FileUtils.writeTextToFileAtPath;
 import static com.drofff.palindrome.utils.IOUtils.readAllAsString;
 import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
 
@@ -25,22 +25,7 @@ public class FileServiceImpl implements FileService {
         validateNotNull(filename, "File should obtain a name");
         validateNotNull(content, "File content should not be null");
         String filePath = pathToFileWithName(filename);
-        saveFileAtPath(content, filePath);
-    }
-
-    private void saveFileAtPath(String content, String path) {
-        try {
-            writeContentToFileAtPath(content, path);
-        } catch(IOException e) {
-            throw new PalindromeException(e.getMessage());
-        }
-    }
-
-    private void writeContentToFileAtPath(String content, String path) throws IOException {
-        try(FileOutputStream fileOutputStream = new FileOutputStream(path)) {
-            byte[] contentBytes = content.getBytes();
-            fileOutputStream.write(contentBytes);
-        }
+        writeTextToFileAtPath(content, filePath);
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.drofff.palindrome.service;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -14,7 +16,7 @@ import com.drofff.palindrome.context.BeanContext;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.HashMap;
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -22,19 +24,20 @@ import java.util.concurrent.Executors;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static androidx.core.app.NotificationCompat.PRIORITY_MAX;
-import static com.drofff.palindrome.R.string.update_registration_token_url;
+import static com.drofff.palindrome.R.string.token_cache_file;
 import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.OPTION_ID_KEY;
-import static com.drofff.palindrome.constants.JsonConstants.REGISTRATION_TOKEN_KEY;
 import static com.drofff.palindrome.constants.JsonConstants.TOKEN_KEY;
-import static com.drofff.palindrome.utils.FormattingUtils.resolveStringParams;
-import static com.drofff.palindrome.utils.HttpUtils.postToServer;
+import static com.drofff.palindrome.utils.FileUtils.createFileIfNotExists;
+import static com.drofff.palindrome.utils.FileUtils.writeTextToFileAtPath;
 import static com.drofff.palindrome.utils.NetUtils.getMacAddress;
 import static com.drofff.palindrome.utils.ValidationUtils.validateNotNull;
 
 public class MessagingService extends FirebaseMessagingService {
 
     private static final Executor SERVICE_EXECUTOR = Executors.newSingleThreadExecutor();
+
+    private static final String LOG_TAG = MessagingService.class.getName();
 
     private static final String TWO_STEP_AUTH_NOTIFICATION_CHANNEL = "two-step-auth";
 
@@ -103,8 +106,13 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         SERVICE_EXECUTOR.execute(() -> {
+            Log.d(LOG_TAG, "New messaging token has been received " + token);
             if(isAuthenticated()) {
-                refreshRegistrationToken(token);
+                Log.d(LOG_TAG, "Updating device registration token");
+                updateRegistrationToken(token);
+            } else {
+                Log.d(LOG_TAG, "Postponed a registration token update");
+                postponeRegistrationTokenUpdate(token);
             }
         });
     }
@@ -114,20 +122,22 @@ public class MessagingService extends FirebaseMessagingService {
         return authorizationTokenService.getAuthorizationTokenIfPresent().isPresent();
     }
 
-    private void refreshRegistrationToken(String token) {
-        String refreshRegistrationTokenUrl = getBaseContext().getResources()
-                .getString(update_registration_token_url);
-        Map<String, String> refreshParams = refreshRegistrationTokenParams(token);
-        String refreshRegistrationTokenUrlWithParams = resolveStringParams(refreshRegistrationTokenUrl,
-                refreshParams);
-        postToServer(refreshRegistrationTokenUrlWithParams);
+    private void updateRegistrationToken(String token) {
+        TwoStepAuthService twoStepAuthService = BeanContext.getBeanOfClass(TwoStepAuthService.class);
+        twoStepAuthService.updateRegistrationToken(token);
     }
 
-    private Map<String, String> refreshRegistrationTokenParams(String token) {
-        Map<String, String> requestParams = new HashMap<>();
-        requestParams.put(REGISTRATION_TOKEN_KEY, token);
-        requestParams.put(MAC_ADDRESS_KEY, getMacAddress());
-        return requestParams;
+    private void postponeRegistrationTokenUpdate(String token) {
+        String tokenCacheFile = getTokenCacheFilePath();
+        createFileIfNotExists(tokenCacheFile);
+        writeTextToFileAtPath(token, tokenCacheFile);
+    }
+
+    private String getTokenCacheFilePath() {
+        Context appContext = getApplicationContext();
+        File appDir = appContext.getFilesDir();
+        String tokenCacheFile = appContext.getString(token_cache_file);
+        return appDir.getAbsolutePath() + "/" + tokenCacheFile;
     }
 
 }

@@ -8,4 +8,6 @@ public interface TwoStepAuthService {
 
     boolean isTwoStepAuthEnabled();
 
+    void updateRegistrationToken(String token);
+
 }

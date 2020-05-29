@@ -25,4 +25,10 @@ public class ValidationUtils {
         return nowEpochSeconds >= epochSecondsDate;
     }
 
+    public static void validateIsTrue(boolean condition, String errorMessage) {
+        if(!condition) {
+            throw new ValidationException(errorMessage);
+        }
+    }
+
 }

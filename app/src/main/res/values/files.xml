@@ -2,4 +2,5 @@
 <resources>
     <string name="authorization_token_file">authorization_token.json</string>
     <string name="user_authentication_file">user_authentication.json</string>
+    <string name="token_cache_file">token.cache</string>
 </resources>
