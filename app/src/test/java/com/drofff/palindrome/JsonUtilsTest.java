@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -80,7 +81,12 @@ public class JsonUtilsTest {
         ViolationDto resultViolation = JsonUtils.parseObjectOfClassFromJson(ViolationDto.class, testJson);
 
         Date expectedDate = new Date(120, 11, 12);
-        assertEquals(expectedDate.toString(), resultViolation.getDateTime());
+        assertEquals(dateToStr(expectedDate), resultViolation.getDateTime());
+    }
+
+    private String dateToStr(Date date) {
+        return new SimpleDateFormat("kk:mm dd.MM.yyyy")
+                .format(date);
     }
 
     @Test
