@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static androidx.core.app.NotificationCompat.PRIORITY_MAX;
 import static com.drofff.palindrome.R.string.token_cache_file;
 import static com.drofff.palindrome.constants.JsonConstants.MAC_ADDRESS_KEY;
@@ -88,8 +87,7 @@ public class MessagingService extends FirebaseMessagingService {
         Intent intent = new Intent(getApplicationContext(), DeviceRequestActivity.class);
         intent.putExtra(TOKEN_KEY, token);
         intent.putExtra(OPTION_ID_KEY, optionId);
-        intent.setFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TASK);
-        return PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+        return PendingIntent.getActivity(getApplicationContext(), 0, intent, FLAG_UPDATE_CURRENT);
     }
 
     private Notification twoStepAuthNotificationForIntent(PendingIntent pendingIntent) {
